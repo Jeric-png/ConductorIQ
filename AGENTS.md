@@ -123,6 +123,13 @@ When asked to use Stitch MCP:
 - If Stitch MCP is not available, do not block implementation. Record that Stitch access was unavailable and continue with local `Assets/` references plus simulated Stitch activity in the UI.
 - Do not add real Stitch API calls, credentials, backend routes, or MCP runtime dependencies during the 3-hour MVP.
 
+Current verified Stitch access:
+
+- Remote MCP endpoint is configured in the local Codex config.
+- `ConductorIQ Orchestration Workspace` is accessible as `projects/11643138006250717621`.
+- The project exposes desktop screens and a dark purple-accented design theme.
+- Use this as an optional visual reference only; local `Assets/` remain the reliable implementation source.
+
 ## 7. Product Architecture Discipline
 
 LangGraph is part of the ConductorIQ product architecture. It should be represented as the internal orchestration engine that coordinates agents, state, routing, validation loops, retries, dependencies, approval checkpoints, and continuous execution.

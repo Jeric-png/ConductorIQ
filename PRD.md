@@ -562,6 +562,15 @@ Real integrations can be added later, but they must not be required for the curr
 
 Stitch MCP access must not block the 3-hour MVP. If a Stitch MCP connector is available in the environment, Codex may inspect whether a ConductorIQ design/project is accessible and reference it as an external design source. If no Stitch MCP tool is exposed, the UI should continue using local `Assets/` references and simulated Stitch activity in agent logs and design cards.
 
+Verified Stitch reference as of 2026-05-17:
+
+- Project title: `ConductorIQ Orchestration Workspace`.
+- Project resource: `projects/11643138006250717621`.
+- Visibility: private.
+- Device type: desktop.
+- Theme signals: dark mode, Geist headline typography, Inter body typography, JetBrains Mono labels, purple custom accent.
+- Usage for MVP: optional visual reference only; do not block implementation on live Stitch screen retrieval.
+
 ### 15.3 MVP Implementation Guidance
 
 For the hackathon MVP, implementation must use:
@@ -756,6 +765,7 @@ Future roadmap items must not be implemented in the 3-hour MVP unless the requir
 ## 20. Source References
 
 - OpenAI Cookbook: [Using Goals in Codex](https://developers.openai.com/cookbook/examples/codex/using_goals_in_codex).
+- Verified Stitch project reference: `ConductorIQ Orchestration Workspace` at `projects/11643138006250717621`.
 
 | Local Design Reference | Path |
 | --- | --- |

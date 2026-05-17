@@ -49,7 +49,7 @@ Reference: https://developers.openai.com/cookbook/examples/codex/using_goals_in_
 
 For this repository, the persistent implementation goal is:
 
-> Build ConductorIQ into a polished local MVP that matches `PRD.md` as closely as possible within the 4-5 hour MVP constraint.
+> Build ConductorIQ into a polished frontend-only local MVP that matches `PRD.md` as closely as possible within the hard 3-hour MVP constraint.
 
 Completion evidence should include:
 
@@ -61,24 +61,48 @@ Completion evidence should include:
 - Validation and critique loops.
 - Updated `PROGRESS.md`.
 
+When the user starts work with `/goal`, Codex must treat the goal as an active implementation contract:
+
+- Continue working until the goal is complete, the 3-hour MVP acceptance criteria are met, or a genuine blocker prevents progress.
+- Do not stop after planning, scaffolding, or partial implementation if the app is still not runnable.
+- Use `PROGRESS.md` as the live execution ledger and update it after each milestone.
+- Prefer making the next highest-priority working change over asking for clarification when the PRD provides a reasonable default.
+- If blocked, record the blocker, attempted fixes, and the next concrete recovery step in `PROGRESS.md`.
+- Mark the goal complete only after verification proves the local app runs or builds successfully.
+
 ## 4. Implementation Priorities
 
 Prioritize in this order:
 
 1. App runs locally without errors.
-2. Core ConductorIQ visual identity and layout.
-3. Idea intake and workflow activation.
-4. Agent roster and visible execution states.
-5. Orchestration graph or stage visualization.
-6. Artifact vault and generated asset cards.
-7. Project memory and dependency tracking.
-8. Validation, critique, retry, and revision loops.
-9. Launch or deploy readiness view.
+2. Six-workspace ConductorIQ shell: Intake, Strategy, PRD Generation, Synthesis, Deployment, and Launch.
+3. Core cinematic visual identity and layout.
+4. Idea intake and workflow activation.
+5. Deterministic frontend orchestration state machine.
+6. Agent roster and visible execution states.
+7. Strategy workspace with market signals, competitors, personas, risks, and validation confidence.
+8. PRD Generation and Synthesis workspaces with generated artifacts and final pursue/refine/reject recommendation.
+9. Deployment and Launch workspaces with MVP scope, readiness, and next actions.
 10. Polish, responsiveness, and demo reliability.
 
 Do not implement unrelated features outside the PRD unless required to make the MVP coherent, runnable, or demo-ready.
 
-## 5. Product Architecture Discipline
+Timeboxing rule: if a requirement cannot fit in the 3-hour MVP window, implement the smallest believable visual simulation that satisfies the user-facing acceptance criteria and document the shortcut in `PROGRESS.md`.
+
+## 5. Codex Agent Responsibilities
+
+Codex should operate as a compact implementation team during `/goal` work. These are working responsibilities, not product agents:
+
+- Product Extractor: read `PRD.md`, extract the six workspaces, acceptance criteria, constraints, and required simulated states before coding.
+- Implementation Lead: build the Vite React TypeScript app, keep architecture simple, and prioritize runnable increments.
+- UI Builder: implement the cinematic frontend shell, workspace panels, agent cards, logs, scores, artifacts, and visual hierarchy from `Assets/`.
+- Simulation Engineer: implement localStorage persistence, deterministic timers, workflow ticks, mock outputs, agent state transitions, and recommendation scoring.
+- Verifier: run install/build/typecheck/browser verification where available and record results in `PROGRESS.md`.
+- Git Publisher: commit and push each coherent milestone to `origin/main` after verification.
+
+Codex should not spawn sub-agents unless the user explicitly requests delegated or parallel agent work. If sub-agents are requested, each sub-agent must receive a bounded task, a disjoint write scope, and this `AGENTS.md` context.
+
+## 6. Product Architecture Discipline
 
 LangGraph is part of the ConductorIQ product architecture. It should be represented as the internal orchestration engine that coordinates agents, state, routing, validation loops, retries, dependencies, approval checkpoints, and continuous execution.
 
@@ -96,7 +120,7 @@ When implementing the MVP:
 - Use timers, deterministic state machines, mock agent outputs, staged artifact generation, and rotating logs so demos are stable.
 - Persist workflow state, generated artifacts, agent states, execution logs, validation scores, and PRD content with localStorage or IndexedDB.
 
-## 6. Progress Tracking
+## 7. Progress Tracking
 
 `PROGRESS.md` must remain current during implementation.
 
@@ -111,7 +135,7 @@ Each update should include:
 
 Do not mark a requirement complete unless it is implemented and verified.
 
-## 7. GitHub Commit Discipline
+## 8. GitHub Commit Discipline
 
 Codex should commit progressively to GitHub during implementation instead of waiting until the end of a large build.
 
@@ -128,7 +152,7 @@ Working rules:
 
 If GitHub authentication fails because an environment token is invalid, prefer using the stored `gh` account for `Jeric-png` by running GitHub commands with `GITHUB_TOKEN` unset.
 
-## 8. Verification Discipline
+## 9. Verification Discipline
 
 After meaningful implementation changes, Codex should run the most relevant available checks:
 
@@ -140,7 +164,7 @@ After meaningful implementation changes, Codex should run the most relevant avai
 
 If a check cannot run, record why in `PROGRESS.md` or the final response.
 
-## 9. UX Discipline
+## 10. UX Discipline
 
 ConductorIQ should not look or behave like a generic chatbot.
 
@@ -157,7 +181,7 @@ Implementation should preserve the PRD's intended feel:
 - Memory and validation panels.
 - Readiness and confidence metrics.
 
-## 10. Scope Control
+## 11. Scope Control
 
 Avoid:
 
@@ -169,6 +193,7 @@ Avoid:
 - Microservices.
 - Unrelated dashboards.
 - Features not grounded in the PRD.
+- Work that does not help complete the 3-hour MVP acceptance criteria.
 
 Prefer:
 

@@ -3,7 +3,7 @@
 Version: 0.1  
 Date: 2026-05-17  
 Status: MVP specification  
-Primary build target: polished local hackathon demo
+Primary build target: polished local hackathon demo deliverable in under 3 hours
 
 ## 1. Executive Summary
 
@@ -21,7 +21,7 @@ The core product promise is:
 
 > ConductorIQ autonomously coordinates continuously running AI agents to validate startup ideas and produce evidence-backed MVP recommendations.
 
-The MVP should demonstrate the orchestration experience, persistent workflow behavior, visible agent collaboration, artifact generation, validation loops, and cinematic execution state as a frontend-only local application. It must not include backend services, authentication, billing, databases, server APIs, queues, or production infrastructure.
+The MVP should demonstrate the orchestration experience, persistent workflow behavior, visible agent collaboration, artifact generation, validation loops, and cinematic execution state as a frontend-only local application. It must not include backend services, authentication, billing, databases, server APIs, queues, or production infrastructure. The implementation must be scoped to a 3-hour build window.
 
 ## 2. Product Vision
 
@@ -69,15 +69,15 @@ ConductorIQ solves this by treating early market validation as a persistent grap
 
 ### 5.1 Product Goals
 
-- Convert a rough startup idea into a structured MVP foundation package.
+- Convert a rough startup idea into a structured market-validation decision and MVP foundation summary.
 - Demonstrate visible coordination between specialized agents.
 - Show persistent workflow execution with continuously active states.
 - Maintain project memory and artifact dependencies.
-- Generate interconnected artifacts across research, planning, design, architecture, QA, and launch.
+- Generate interconnected artifacts across market research, strategy, PRD, synthesis, deployment-readiness, and launch recommendation.
 - Trigger critique and validation loops automatically.
 - Communicate the role of LangGraph as the internal orchestration engine.
 - Run entirely in the browser without API keys or a backend server.
-- Deliver a polished local MVP demonstration within approximately 3-4 hours, with a practical 4-5 hour ceiling if needed.
+- Deliver a polished local MVP demonstration within a hard 3-hour implementation constraint.
 
 ### 5.2 MVP Priorities
 
@@ -90,8 +90,40 @@ ConductorIQ solves this by treating early market validation as a persistent grap
 - Strong demo quality.
 - Clear artifact progression.
 - Continuous active execution states.
+- Strict scope control around the six core workspaces.
 
-### 5.3 Non-Goals
+### 5.3 Three-Hour MVP Constraint
+
+The MVP must be completable by one coding agent in under 3 hours. This constraint overrides any lower-priority feature detail elsewhere in the PRD.
+
+Required within 3 hours:
+
+- A Vite React TypeScript app that runs locally.
+- A cinematic shell with top navigation, left workspace navigation, main content, right context panel, and live log panel.
+- Six core workspaces only: Intake, Strategy, PRD Generation, Synthesis, Deployment, and Launch.
+- Frontend-only simulated workflow state using timers and deterministic transitions.
+- Local persistence with localStorage.
+- Visible agent roster, status changes, confidence scores, market signals, persona feedback, competitor insights, risk flags, and generated artifacts.
+- A final build recommendation: pursue, refine, or reject, with supporting evidence.
+
+Allowed shortcuts:
+
+- Use hardcoded/mock validation content generated from the submitted idea.
+- Use CSS-built panels, cards, graphs, and mock diagrams instead of real charting or graph libraries.
+- Simulate LangGraph, OpenAI, Exa, Stitch MCP, and Codex/Cursor integrations as UI concepts only.
+- Represent design assets as references rather than generating new assets.
+
+Out of scope for the 3-hour MVP unless all required items are complete:
+
+- Real API calls.
+- Real LangGraph execution.
+- Complex graph editing.
+- Multiple projects.
+- Export/download flows.
+- Detailed responsive tablet/mobile polish.
+- Full architecture diagrams or implementation scaffolds.
+
+### 5.4 Non-Goals
 
 - Authentication.
 - Billing.
@@ -128,40 +160,33 @@ ConductorIQ solves this by treating early market validation as a persistent grap
 
 1. The user enters a rough startup or software idea, for example: "Build an AI-native cybersecurity SOC assistant."
 2. ConductorIQ initializes a project and stores the raw idea in project memory.
-3. The UI represents a LangGraph-style orchestration engine decomposing the idea into graph-based workflow stages.
-4. Specialized agents execute tasks across idea refinement, market research, competitor analysis, persona simulation, PRD generation, UX/UI ideation, architecture planning, MVP planning, QA review, and launch preparation.
-5. Generated artifacts appear in the workspace as they become available.
-6. Validation agents critique outputs generated by other agents.
+3. The UI represents a LangGraph-style orchestration engine decomposing the idea into the six required workspaces.
+4. Specialized agents simulate idea refinement, market research, competitor analysis, persona validation, risk analysis, PRD generation, synthesis, deployment-readiness, and launch recommendation tasks.
+5. Generated artifacts appear progressively in the active workspace and right-side context panel.
+6. Validation agents critique market evidence, persona fit, competitor pressure, MVP scope, and launch risk.
 7. The simulated LangGraph runtime routes execution based on task completion, dependencies, validation results, critique outcomes, and workflow state.
-8. The Stitch MCP integration point generates simulated UI concepts and design iterations.
-9. Generated or simulated visual assets are stored locally and reused as downstream references.
-10. Coding-style agents generate MVP implementation plans or starter structures.
-11. QA and validation agents simulate review from users, founders, investors, developers, and technical architects.
-12. The system revisits weak outputs and improves them autonomously.
-13. The final output becomes a continuously evolving MVP Foundation Package.
+8. Simulated OpenAI, Exa, Stitch MCP, and Codex/Cursor integration points appear as architecture concepts in logs, cards, and agent activity.
+9. The system revisits weak assumptions and improves the recommendation autonomously.
+10. The final output becomes an evidence-backed MVP Foundation Package with a pursue, refine, or reject recommendation.
 
-## 8. Required Workflow Stages
+## 8. Required Workspaces and Workflow Stages
 
-ConductorIQ must represent the product development workflow as explicit orchestration stages.
+ConductorIQ must center the MVP around six core workspaces. Detailed agent activities may be shown inside these workspaces, but the navigation and implementation should not expand beyond these six areas for the 3-hour MVP.
 
-| Stage | Purpose | Example Outputs |
+| Workspace | Purpose | Required MVP Outputs |
 | --- | --- | --- |
-| Idea Intake | Capture the rough concept and initialize execution state. | Raw idea, inferred product category, initial scope estimate |
-| Idea Refinement | Clarify problem, audience, value proposition, and MVP framing. | Refined concept brief, assumptions, open questions |
-| Market Validation | Evaluate demand signals and market opportunity. | Market insights, opportunity score, validation confidence |
-| Competitor Analysis | Identify direct and adjacent competitors. | Competitor landscape, positioning gaps, differentiation notes |
-| Persona Simulation | Simulate target users and stakeholder reactions. | Persona profiles, objections, jobs-to-be-done |
-| PRD Generation | Produce structured product requirements. | PRD draft, feature list, acceptance criteria |
-| UI/UX Ideation | Translate product intent into interface directions. | UX flows, screen concepts, interaction notes |
-| Stitch Design | Generate and iterate visual UI concepts. | Design assets, UI references, mockup metadata |
-| Architecture Planning | Define technical system shape and tradeoffs. | Architecture notes, stack rationale, schemas |
-| MVP Planning | Convert product and architecture into an execution plan. | MVP backlog, implementation sequence, scope cuts |
-| QA Review | Critique product, technical, and UX outputs. | QA findings, risk flags, revision requests |
-| Launch Preparation | Package final assets for demo or early launch. | Launch plan, demo script, investor summary, readiness score |
+| Intake | Capture the rough concept and initialize validation state. | Raw idea, inferred category, validation depth, initial agent queue |
+| Strategy | Evaluate market, competitors, personas, assumptions, and risks. | Market confidence, competitor cards, persona reactions, risk register |
+| PRD Generation | Convert validated assumptions into a compact product requirement draft. | Problem statement, target user, MVP features, acceptance criteria |
+| Synthesis | Combine evidence into a clear build decision. | Pursue/refine/reject recommendation, evidence summary, weakest assumptions |
+| Deployment | Simulate MVP readiness and implementation implications. | MVP scope, stack suggestion, effort estimate, readiness score |
+| Launch | Present the final MVP foundation package. | Launch narrative, validation summary, next actions, final confidence score |
+
+Detailed activities such as idea refinement, market validation, competitor analysis, persona simulation, UX ideation, architecture planning, QA critique, and launch preparation should be represented as agent tasks inside the six workspaces rather than separate navigable pages.
 
 ## 9. Agent System Requirements
 
-The platform must include visible specialized agents. Each agent should have a name, role, execution state, current task, progress indicator, outputs, logs, dependencies, and collaboration events.
+The platform must include visible specialized agents. Each agent should have a name, role, execution state, current task, progress indicator, outputs, logs, dependencies, and collaboration events. For the 3-hour MVP, agents may be static definitions driven by a shared frontend state machine.
 
 ### 9.1 Required Agents
 
@@ -180,6 +205,8 @@ The platform must include visible specialized agents. Each agent should have a n
 | MVP Planning Agent | Produces build plan, backlog, and implementation sequencing. | MVP backlog, milestone plan, scaffold notes |
 | QA Critic Agent | Reviews outputs for ambiguity, feasibility, risk, and missing requirements. | Critique events, revision requests, risk flags |
 | Launch Agent | Packages launch assets and readiness summaries. | Demo script, launch checklist, readiness score |
+
+To stay within 3 hours, the UI may show all agents as compact cards while actively simulating only the highest-impact validation agents: Workflow Supervisor, Market Research, Competitor Analysis, Persona Validation, PRD, QA Critic, Memory, and Launch.
 
 ### 9.2 Agent States
 
@@ -306,7 +333,7 @@ ConductorIQ should generate and display artifacts such as:
 - UI mockups.
 - Stitch design assets.
 - Architecture notes.
-- Database schema suggestions.
+- Data model assumptions.
 - Feature breakdowns.
 - MVP implementation plans.
 - QA critiques.
@@ -389,8 +416,8 @@ Use the local design references in the `Assets/` folder as the product's visual 
 
 The MVP should include:
 
-- Top navigation with ConductorIQ brand, Orchestration, Agents, Memory, and Deploy sections.
-- Left pipeline navigation with stages such as Intake, Strategy, Research, Analysis, Design, Refine, Execute, Verify, Vault, and Deploy.
+- Top navigation with ConductorIQ brand, autonomous mode indicator, validation confidence, and final recommendation state.
+- Left pipeline navigation with exactly six workspaces: Intake, Strategy, PRD Generation, Synthesis, Deployment, and Launch.
 - Main workspace for the active stage.
 - Right-side context panel for memory, generated assets, critique, or readiness metrics.
 - Bottom or embedded terminal stream for live execution logs.
@@ -400,12 +427,11 @@ The MVP should include:
 | View | Purpose | Key Elements |
 | --- | --- | --- |
 | Intake | Start a workflow from a rough idea. | Large text input, initialize button, readiness pre-compute cards, system console |
-| Orchestration | Show workflow graph and active LangGraph routing. | Node graph, agent runtime cards, conditional logic panel, timeline |
-| Agents | Show specialized agent roster and current work. | Agent cards, state badges, progress, handoffs |
-| Memory | Show persistent project context and artifact lineage. | Memory entries, dependency map, context assets |
-| Validation | Show market confidence and critique loops. | Confidence score, market grid, live research stream |
-| Artifact Vault | Show generated assets and statuses. | Artifact cards, dependencies, version/status labels |
-| Deploy or Launch | Show final readiness and MVP package. | Readiness score, launch assets, implementation scaffold preview |
+| Strategy | Show market validation, competitor pressure, personas, and risk signals. | Confidence score, market grid, competitor cards, persona feedback, risk flags |
+| PRD Generation | Show requirements being generated from validated evidence. | PRD sections, feature priorities, acceptance criteria, critique notes |
+| Synthesis | Show the evidence-backed build decision. | Pursue/refine/reject recommendation, evidence summary, weak assumptions |
+| Deployment | Show MVP readiness and implementation implications. | MVP scope, simulated stack insight, effort estimate, readiness score |
+| Launch | Show final MVP foundation package. | Final validation score, launch narrative, next actions, artifact summary |
 
 ### 12.4 Required UX Signals
 
@@ -618,7 +644,7 @@ interface Artifact {
     | "ux-flow"
     | "ui-mockup"
     | "architecture"
-    | "schema"
+    | "data-assumption"
     | "mvp-plan"
     | "qa-critique"
     | "launch-plan";
@@ -663,20 +689,23 @@ interface MemoryEntry {
 
 ## 17. MVP Acceptance Criteria
 
-The MVP is acceptable when:
+The MVP is acceptable within the 3-hour build window when:
 
 - A user can enter a rough idea and initialize a ConductorIQ project.
-- The UI clearly looks like an autonomous orchestration workspace, not a chatbot.
-- At least 10 specialized agents are visible with meaningful states.
-- Workflow stages progress visibly over time.
-- The orchestration graph or stage system shows dependencies and active routing.
+- The UI clearly looks like an autonomous market-validation workspace, not a chatbot.
+- The six required workspaces are visible: Intake, Strategy, PRD Generation, Synthesis, Deployment, and Launch.
+- At least 8 specialized agents are visible with meaningful states.
+- Workflow stages progress visibly over time through deterministic frontend simulation.
+- The orchestration graph, timeline, or stage system shows dependencies and active routing.
 - Artifacts appear progressively and reference upstream context.
 - QA or validation loops visibly critique and revise at least one output.
 - Project memory is visible and updates during execution.
 - Execution logs stream continuously while autonomous mode is active.
-- The final state presents an MVP Foundation Package with research, PRD, design, architecture, MVP plan, QA, and launch assets.
+- The final state presents an evidence-backed recommendation: pursue, refine, or reject.
+- The final state presents an MVP Foundation Package with market evidence, competitor insights, persona feedback, PRD summary, MVP scope, risk notes, and launch next actions.
 - Reloading the app preserves meaningful workflow state.
 - The product copy explicitly communicates LangGraph as the internal orchestration backbone.
+- The app builds successfully with no backend, no server APIs, no database, and no required API keys.
 
 ## 18. Risks and Mitigations
 
@@ -706,9 +735,12 @@ The MVP is acceptable when:
 - Rich artifact version history.
 - Scheduled revalidation of startup ideas over time.
 
+Future roadmap items must not be implemented in the 3-hour MVP unless the required acceptance criteria are already complete and verified.
+
 ## 20. Source References
 
 - OpenAI Cookbook: [Using Goals in Codex](https://developers.openai.com/cookbook/examples/codex/using_goals_in_codex).
+
 | Local Design Reference | Path |
 | --- | --- |
 | Intake and orchestration shell | `Assets/Screenshot 2026-05-17 at 9.19.46 AM.png` |

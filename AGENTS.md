@@ -49,7 +49,7 @@ Reference: https://developers.openai.com/cookbook/examples/codex/using_goals_in_
 
 For this repository, the persistent implementation goal is:
 
-> Build ConductorIQ into a polished frontend-only local MVP that matches `PRD.md` as closely as possible within the hard 3-hour MVP constraint.
+> Build ConductorIQ into a polished frontend-only local MVP that matches `PRD.md` as closely as possible within the hard 2 hour 30 minute MVP constraint.
 
 Completion evidence should include:
 
@@ -63,7 +63,7 @@ Completion evidence should include:
 
 When the user starts work with `/goal`, Codex must treat the goal as an active implementation contract:
 
-- Continue working until the goal is complete, the 3-hour MVP acceptance criteria are met, or a genuine blocker prevents progress.
+- Continue working until the goal is complete, the 2 hour 30 minute MVP acceptance criteria are met, or a genuine blocker prevents progress.
 - Do not stop after planning, scaffolding, or partial implementation if the app is still not runnable.
 - Use `PROGRESS.md` as the live execution ledger and update it after each milestone.
 - Prefer making the next highest-priority working change over asking for clarification when the PRD provides a reasonable default.
@@ -87,17 +87,17 @@ Prioritize in this order:
 
 Do not implement unrelated features outside the PRD unless required to make the MVP coherent, runnable, or demo-ready.
 
-Timeboxing rule: if a requirement cannot fit in the 3-hour MVP window, implement the smallest believable visual simulation that satisfies the user-facing acceptance criteria and document the shortcut in `PROGRESS.md`.
+Timeboxing rule: if a requirement cannot fit in the 2 hour 30 minute MVP window, implement the smallest believable visual simulation that satisfies the user-facing acceptance criteria and document the shortcut in `PROGRESS.md`.
 
-Three-hour execution budget:
+Two-hour-thirty execution budget:
 
-- 0:00-0:20: scaffold Vite React TypeScript app and TailwindCSS.
-- 0:20-0:50: build the cinematic shell and six-workspace navigation.
-- 0:50-1:20: implement intake, localStorage state, agents, logs, and deterministic workflow ticks.
-- 1:20-2:00: implement Strategy validation content: market signals, competitors, personas, risks, and scores.
-- 2:00-2:30: implement PRD Generation and Synthesis with critique loop and pursue/refine/reject recommendation.
-- 2:30-2:45: implement Deployment and Launch summaries.
-- 2:45-3:00: verify build, reload persistence, and end-to-end demo flow.
+- 0:00-0:15: scaffold Vite React TypeScript app and TailwindCSS.
+- 0:15-0:40: build the cinematic shell and six-workspace navigation.
+- 0:40-1:05: implement intake, localStorage state, agents, logs, and deterministic workflow ticks.
+- 1:05-1:40: implement Strategy validation content: market signals, competitors, personas, risks, and scores.
+- 1:40-2:05: implement PRD Generation and Synthesis with critique loop and pursue/refine/reject recommendation.
+- 2:05-2:20: implement Deployment and Launch summaries.
+- 2:20-2:30: verify build, reload persistence, and end-to-end demo flow.
 
 ## 5. Codex Agent Responsibilities
 
@@ -108,7 +108,7 @@ Codex should operate as a compact implementation team during `/goal` work. These
 - UI Builder: implement the cinematic frontend shell, workspace panels, agent cards, logs, scores, artifacts, and visual hierarchy from `Assets/`.
 - Simulation Engineer: implement localStorage persistence, deterministic timers, workflow ticks, mock outputs, agent state transitions, and recommendation scoring.
 - Verifier: run install/build/typecheck/browser verification where available and record results in `PROGRESS.md`.
-- Git Publisher: commit and push each coherent milestone to `origin/main` after verification.
+- Git Publisher: optional only after the build is verified or when the user explicitly asks for a commit/push.
 
 Codex should not spawn sub-agents unless the user explicitly requests delegated or parallel agent work. If sub-agents are requested, each sub-agent must receive a bounded task, a disjoint write scope, and this `AGENTS.md` context.
 
@@ -121,7 +121,7 @@ When asked to use Stitch MCP:
 - First use available tool discovery to check whether a Stitch MCP tool or connector is exposed in the current Codex environment.
 - If Stitch MCP is available, inspect whether a ConductorIQ project or design reference is accessible and record the result in `PROGRESS.md`.
 - If Stitch MCP is not available, do not block implementation. Record that Stitch access was unavailable and continue with local `Assets/` references plus simulated Stitch activity in the UI.
-- Do not add real Stitch API calls, credentials, backend routes, or MCP runtime dependencies during the 3-hour MVP.
+- Do not add real Stitch API calls, credentials, backend routes, or MCP runtime dependencies during the 2 hour 30 minute MVP.
 
 Current verified Stitch access:
 
@@ -139,6 +139,7 @@ Codex does not need to use LangGraph as its own development workflow. Codex may 
 When implementing the MVP:
 
 - Build a frontend-only local application using React, TypeScript, Vite, and TailwindCSS.
+- Do not create extra top-level workspaces beyond Intake, Strategy, PRD Generation, Synthesis, Deployment, and Launch.
 - Do not implement a backend server, server APIs, databases, authentication, billing, queues, workers, or production infrastructure.
 - Do not require API keys.
 - Represent LangGraph, OpenAI, Exa, Stitch MCP, and Codex/Cursor as product architecture concepts and simulated integration points inside the UI.
@@ -165,15 +166,15 @@ Do not mark a requirement complete unless it is implemented and verified.
 
 ## 9. GitHub Commit Discipline
 
-Codex should commit progressively to GitHub during implementation instead of waiting until the end of a large build.
+GitHub commits and pushes are optional during the 2 hour 30 minute MVP build. Building and verifying the app takes priority over publishing milestones.
 
 Working rules:
 
-- Commit after each coherent milestone, such as scaffolding the app, implementing the orchestration state model, building the intake flow, adding agent simulation, adding artifact persistence, or completing visual polish.
+- Commit only after a coherent milestone if verification has passed and doing so will not endanger the 2 hour 30 minute delivery window.
 - Keep commits small enough that each one has a clear purpose and can be reviewed independently.
 - Run the most relevant available verification before committing.
 - Do not commit broken or partially applied work unless the commit message explicitly marks it as a checkpoint and the user asked for that behavior.
-- Push successful milestone commits to `origin` so GitHub remains current.
+- Push successful commits to `origin` only when requested or when there is enough time after verification.
 - Do not commit secrets, `.env` files, local cache folders, build outputs, or dependency folders.
 - Use concise imperative commit messages, for example `Add frontend orchestration shell` or `Implement local workflow persistence`.
 - Before committing, inspect `git status --short` and make sure only intended ConductorIQ files are staged.
@@ -209,6 +210,8 @@ Implementation should preserve the PRD's intended feel:
 - Memory and validation panels.
 - Readiness and confidence metrics.
 
+Screenshots and Stitch designs are visual references only. Obey the PRD scope over screenshots if they conflict. Do not copy screenshot navigation labels that are outside the six required workspaces.
+
 ## 12. Scope Control
 
 Avoid:
@@ -221,7 +224,7 @@ Avoid:
 - Microservices.
 - Unrelated dashboards.
 - Features not grounded in the PRD.
-- Work that does not help complete the 3-hour MVP acceptance criteria.
+- Work that does not help complete the 2 hour 30 minute MVP acceptance criteria.
 
 Prefer:
 

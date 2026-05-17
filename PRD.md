@@ -112,6 +112,7 @@ Allowed shortcuts:
 - Use CSS-built panels, cards, graphs, and mock diagrams instead of real charting or graph libraries.
 - Simulate LangGraph and Codex/Cursor orchestration as UI concepts only.
 - Represent design assets as references rather than generating new assets.
+- Export the final static MVP package as downloadable local files instead of building cloud deployment or database persistence.
 
 Out of scope for the 2 hour 30 minute MVP unless all required items are complete:
 
@@ -119,7 +120,7 @@ Out of scope for the 2 hour 30 minute MVP unless all required items are complete
 - Real LangGraph execution.
 - Complex graph editing.
 - Multiple projects.
-- Export/download flows.
+- Cloud deployment flows.
 - Detailed responsive tablet/mobile polish.
 - Full architecture diagrams or implementation scaffolds.
 
@@ -134,7 +135,7 @@ The implementation should follow this timeboxed sequence. If time runs short, pr
 | 0:40-1:05 | Local orchestration state and API proxy | Idea intake initializes workflow state, agents, scores, logs, localStorage persistence, and real validation request handlers |
 | 1:05-1:40 | Strategy validation workspace | OpenAI + Exa market signals, competitors, personas, risks, validation confidence, and agent activity display |
 | 1:40-2:05 | PRD Generation and Synthesis | PRD summary, feature priorities, critique loop, and pursue/refine/reject recommendation display |
-| 2:05-2:20 | Deployment and Launch | MVP scope, readiness score, launch next actions, and final package summary display |
+| 2:05-2:20 | Deployment and Launch | MVP scope, readiness score, local static MVP package, launch next actions, and final package summary display |
 | 2:20-2:30 | Verification and polish | Build succeeds, reload persists state, demo flow works end-to-end |
 
 ### 5.5 Non-Goals
@@ -173,15 +174,17 @@ The implementation should follow this timeboxed sequence. If time runs short, pr
 ## 7. Core User Flow
 
 1. The user enters a rough startup or software idea, for example: "Build an AI-native cybersecurity SOC assistant."
-2. ConductorIQ initializes a project and stores the raw idea in project memory.
-3. The UI represents a LangGraph-style orchestration engine decomposing the idea into the six required workspaces.
-4. Specialized agents execute idea refinement, market research, competitor analysis, persona validation, risk analysis, PRD generation, synthesis, deployment-readiness, and launch recommendation tasks using OpenAI and Exa where possible.
-5. Generated artifacts appear progressively in the active workspace and right-side context panel.
-6. Validation agents critique market evidence, persona fit, competitor pressure, MVP scope, and launch risk.
-7. The local orchestration runtime routes execution based on task completion, dependencies, validation results, critique outcomes, and workflow state.
-8. OpenAI and Exa activity appears in logs, cards, artifacts, and recommendation evidence; if Exa fails, OpenAI generates a clearly labelled fallback market-research synthesis.
-9. The system revisits weak assumptions and improves the recommendation autonomously.
-10. The final output becomes an evidence-backed MVP Foundation Package with a pursue, refine, or reject recommendation.
+2. Alternatively, the user may select a local `.txt` or `.md` idea brief file to prefill Intake.
+3. ConductorIQ initializes a project and stores the raw idea in project memory.
+4. The UI represents a LangGraph-style orchestration engine decomposing the idea into the six required workspaces.
+5. Specialized agents execute idea refinement, market research, competitor analysis, persona validation, risk analysis, PRD generation, synthesis, deployment-readiness, and launch recommendation tasks using OpenAI and Exa where possible.
+6. Generated artifacts appear progressively in the active workspace and right-side context panel.
+7. Validation agents critique market evidence, persona fit, competitor pressure, MVP scope, and launch risk.
+8. The local orchestration runtime routes execution based on task completion, dependencies, validation results, critique outcomes, and workflow state.
+9. OpenAI and Exa activity appears in logs, cards, artifacts, and recommendation evidence; if Exa fails, OpenAI generates a clearly labelled fallback market-research synthesis.
+10. The system revisits weak assumptions and improves the recommendation autonomously.
+11. The final output becomes an evidence-backed MVP Foundation Package with a pursue, refine, or reject recommendation.
+12. The user can download a local static MVP package containing a simple `index.html`, generated product copy, launch summary, and optional GPT Image 2 visual asset references.
 
 ## 8. Required Workspaces and Workflow Stages
 
@@ -194,7 +197,7 @@ ConductorIQ must center the MVP around six core workspaces. Detailed agent activ
 | PRD Generation | Convert validated assumptions into a compact product requirement draft. | Problem statement, target user, MVP features, acceptance criteria |
 | Synthesis | Combine evidence into a clear build decision. | Pursue/refine/reject recommendation, evidence summary, weakest assumptions |
 | Deployment | Simulate MVP readiness and implementation implications. | MVP scope, stack suggestion, effort estimate, readiness score |
-| Launch | Present the final MVP foundation package. | Launch narrative, validation summary, next actions, final confidence score |
+| Launch | Present the final MVP foundation package and local static MVP output. | Launch narrative, validation summary, next actions, final confidence score, downloadable static MVP package |
 
 Detailed activities such as idea refinement, market validation, competitor analysis, persona simulation, UX ideation, architecture planning, QA critique, and launch preparation should be represented as agent tasks inside the six workspaces rather than separate navigable pages.
 
@@ -469,6 +472,8 @@ The interface should continuously signal autonomy:
 ### 13.1 Idea Intake
 
 - Users can enter a rough startup or product idea.
+- Users can select a local `.txt` or `.md` file to import an idea brief into the Intake text area.
+- Imported files are read in the browser with the File API and are not uploaded to a database.
 - The system creates or resets a local project.
 - The system estimates complexity, scope, validation depth, and MVP time.
 - The system initializes workflow graph nodes and agent states.
@@ -501,12 +506,16 @@ The interface should continuously signal autonomy:
 - Artifacts should appear connected to agents and workflow nodes.
 - Artifacts should be reusable by downstream stages.
 - The final workflow should produce an MVP Foundation Package.
+- The Launch workspace should provide a downloadable static MVP package.
+- The package should be generated locally as simple static files, not deployed to a hosted environment.
+- Minimum static package contents: `index.html`, product positioning copy, MVP feature summary, validation recommendation, launch next actions, and optional GPT Image 2-generated asset reference.
 
 ### 13.6 Persistent Local State
 
 - Active project state persists in localStorage or IndexedDB.
 - Reloading the app restores idea, workflow state, artifacts, logs, validation scores, PRD content, and agent progress.
 - A reset or new workflow action clears the current demo state.
+- Downloaded static MVP package files are separate local exports and are not treated as the source of truth after download.
 
 ### 13.7 Continuous Activity Simulation
 
@@ -730,6 +739,8 @@ The MVP is acceptable within the 2 hour 30 minute build window when:
 - Execution logs stream continuously while autonomous mode is active.
 - The final state presents an evidence-backed recommendation: pursue, refine, or reject.
 - The final state presents an MVP Foundation Package with market evidence, competitor insights, persona feedback, PRD summary, MVP scope, risk notes, and launch next actions.
+- The user can import an idea brief from a local `.txt` or `.md` file.
+- The user can download a static MVP package generated locally with no database connection.
 - Reloading the app preserves meaningful workflow state.
 - The product copy explicitly communicates LangGraph as the internal orchestration backbone.
 - The app builds successfully with no database and uses OpenAI/Exa keys only through local environment configuration.

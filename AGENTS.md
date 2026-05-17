@@ -96,7 +96,7 @@ Two-hour-thirty execution budget:
 - 0:40-1:05: implement intake, localStorage state, agents, logs, and deterministic workflow ticks.
 - 1:05-1:40: implement Strategy validation content: market signals, competitors, personas, risks, and scores.
 - 1:40-2:05: implement PRD Generation and Synthesis with critique loop and pursue/refine/reject recommendation.
-- 2:05-2:20: implement Deployment and Launch summaries.
+- 2:05-2:20: implement Deployment and Launch summaries plus local static MVP package download.
 - 2:20-2:30: verify build, reload persistence, and end-to-end demo flow.
 
 ## 5. Codex Agent Responsibilities
@@ -106,7 +106,7 @@ Codex should operate as a compact implementation team during `/goal` work. These
 - Product Extractor: read `PRD.md`, extract the six workspaces, acceptance criteria, constraints, real API requirements, and workflow states before coding.
 - Implementation Lead: build the Vite React TypeScript app, keep architecture simple, and prioritize runnable increments.
 - UI Builder: implement the cinematic frontend shell, workspace panels, agent cards, logs, scores, artifacts, and visual hierarchy from `Assets/`.
-- Workflow Engineer: implement localStorage persistence, deterministic workflow ticks, OpenAI/Exa request lifecycle states, OpenAI fallback, agent state transitions, and recommendation scoring.
+- Workflow Engineer: implement localStorage persistence, local file import, static package download, deterministic workflow ticks, OpenAI/Exa request lifecycle states, OpenAI fallback, agent state transitions, and recommendation scoring.
 - Verifier: run install/build/typecheck/browser verification where available and record results in `PROGRESS.md`.
 - Git Publisher: optional only after the build is verified or when the user explicitly asks for a commit/push.
 
@@ -146,6 +146,8 @@ When implementing the MVP:
 - If browser-side calls would expose secrets, use the smallest possible local API proxy for OpenAI and Exa only; keep all persistence in localStorage.
 - Use OpenAI as the fallback provider when Exa fails, times out, or returns insufficient market evidence.
 - Use GPT Image 2 (`gpt-image-2`) for generated visual assets when image generation is needed.
+- Support importing a local `.txt` or `.md` idea brief through the browser File API.
+- Support downloading a local static MVP package from the Launch workspace; do not implement hosted deployment.
 - Represent LangGraph, Stitch MCP, and Codex/Cursor as product architecture concepts and lightweight UI integration points.
 - Prefer a coherent real API-backed workflow over mock-only output generation.
 - Keep the architecture modular enough to replace the local workflow runner with LangGraph later.

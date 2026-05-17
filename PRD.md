@@ -3,7 +3,7 @@
 Version: 0.1  
 Date: 2026-05-17  
 Status: MVP specification  
-Primary build target: polished local hackathon demo deliverable in 2 hours 30 minutes
+Primary build target: product-depth local MVP deliverable in approximately 4-5 hours
 
 ## 1. Executive Summary
 
@@ -21,7 +21,7 @@ The core product promise is:
 
 > ConductorIQ autonomously coordinates continuously running AI agents to validate startup ideas and produce evidence-backed MVP recommendations.
 
-The MVP should demonstrate the orchestration experience, persistent workflow behavior, visible agent collaboration, artifact generation, validation loops, and cinematic execution state as a local application. It should use a real local LangGraph workflow to coordinate the validation agents, real OpenAI and Exa API calls for validation where possible, and OpenAI fallback when Exa is unavailable. It must not include authentication, billing, databases, queues, LangGraph Cloud, or production infrastructure. The implementation must be scoped to a 2 hour 30 minute build window.
+The MVP should demonstrate the orchestration experience, persistent workflow behavior, visible agent collaboration, artifact generation, validation loops, approval checkpoints, and cinematic execution state as a local application. It should use a real local LangGraph workflow to coordinate the validation agents, real OpenAI and Exa API calls for validation where possible, and OpenAI fallback when Exa is unavailable. It must not include authentication, billing, databases, queues, LangGraph Cloud, or production infrastructure. The implementation should target a 4-5 hour product-depth build window, where completion is measured by workflow depth and validation coverage rather than speed.
 
 ## 2. Product Vision
 
@@ -77,7 +77,7 @@ ConductorIQ solves this by treating early market validation as a persistent grap
 - Trigger critique and validation loops automatically.
 - Communicate the role of LangGraph as the internal orchestration engine.
 - Use the configured OpenAI and Exa keys for real validation calls while keeping persistence local.
-- Deliver a polished local MVP demonstration within a hard 2 hour 30 minute implementation constraint.
+- Deliver a polished local MVP demonstration within a 4-5 hour product-depth implementation window.
 
 ### 5.2 MVP Priorities
 
@@ -92,19 +92,19 @@ ConductorIQ solves this by treating early market validation as a persistent grap
 - Continuous active execution states.
 - Strict scope control around the six core workspaces.
 
-### 5.3 Two-Hour-Thirty MVP Constraint
+### 5.3 Product-Depth MVP Constraint
 
-The MVP must be completable by one coding agent in 2 hours 30 minutes. This constraint overrides any lower-priority feature detail elsewhere in the PRD.
+The MVP should be completable by one coding agent in approximately 4-5 hours. This constraint prioritizes a complete prompt-to-approved-MVP workflow over a fast but shallow shell. A 10-minute implementation pass is insufficient unless every deep validation gate is already implemented and verified.
 
-Required within 2 hours 30 minutes:
+Required within the product-depth MVP window:
 
 - A Vite React TypeScript app that runs locally.
 - A cinematic shell with top navigation, left workspace navigation, main content, right context panel, and live log panel.
 - Six core workspaces only: Intake, Strategy, PRD Generation, Synthesis, Deployment, and Launch.
 - Real API-backed validation workflow using OpenAI and Exa, with deterministic UI state transitions for progress display only.
 - Local persistence with localStorage.
-- Visible agent roster, status changes, confidence scores, market signals, persona feedback, competitor insights, risk flags, and generated artifacts.
-- A final build recommendation: pursue, refine, or reject, with supporting evidence.
+- Visible agent roster, status changes, confidence scores, prompt artifacts, market leads, market signals, persona feedback, competitor insights, risk flags, comprehensive PRD artifacts, synthesis plan, prototype approval state, and generated artifacts.
+- A final build recommendation: pursue, refine, or reject, with supporting evidence and approval-gated launch package.
 
 Allowed shortcuts:
 
@@ -114,7 +114,7 @@ Allowed shortcuts:
 - Represent design assets as references rather than generating new assets.
 - Export the final static MVP package as downloadable local files instead of building cloud deployment or database persistence.
 
-Out of scope for the 2 hour 30 minute MVP unless all required items are complete:
+Out of scope for the product-depth MVP unless all required items are complete:
 
 - Database-backed persistence.
 - LangGraph Cloud, hosted durable workflows, or database-backed LangGraph checkpointing.
@@ -124,19 +124,21 @@ Out of scope for the 2 hour 30 minute MVP unless all required items are complete
 - Detailed responsive tablet/mobile polish.
 - Full architecture diagrams or implementation scaffolds.
 
-### 5.4 Two-Hour-Thirty Delivery Sequence
+### 5.4 Product-Depth Delivery Sequence
 
 The implementation should follow this timeboxed sequence. If time runs short, preserve the earlier milestones and simplify later visuals rather than expanding scope.
 
 | Timebox | Milestone | Completion Evidence |
 | --- | --- | --- |
-| 0:00-0:15 | Project scaffold and baseline styling | Vite React TypeScript app starts locally with TailwindCSS loaded |
-| 0:15-0:40 | Cinematic shell | Top bar, six-workspace left nav, main panel, right context panel, and log panel render |
-| 0:40-1:05 | Local orchestration state and API proxy | Idea intake initializes workflow state, agents, scores, logs, localStorage persistence, and real validation request handlers |
-| 1:05-1:40 | Strategy validation workspace | OpenAI + Exa market signals, competitors, personas, risks, validation confidence, and agent activity display |
-| 1:40-2:05 | PRD Generation and Synthesis | Comprehensive PRD artifact, PRD review, synthesis plan, interface improvements, critique loop, and pursue/refine/reject recommendation display |
-| 2:05-2:20 | Deployment and Launch | Prototype approval state, MVP scope, readiness score, implementation plan, local static MVP package, launch next actions, and final package summary display |
-| 2:20-2:30 | Verification and polish | Build succeeds, reload persists state, demo flow works end-to-end |
+| 0:00-0:20 | Project audit and scaffold | Dependency check, PRD gap list, runnable Vite React TypeScript app |
+| 0:20-0:45 | Cinematic shell | Top bar, six-workspace left nav, main panel, right context panel, and log panel render |
+| 0:45-1:15 | Prompt lifecycle | Crafted prompt, prompt critique, improved prompt, prompt quality score, and LangGraph prompt-validation state |
+| 1:15-1:50 | Strategy validation workspace | OpenAI + Exa or fallback market leads, market signals, competitors, personas, risks, validation questions, source labels, and confidence score |
+| 1:50-2:30 | PRD Generation | Comprehensive PRD artifact, section completeness, PRD review findings, quality score, and revision requirements |
+| 2:30-3:05 | Synthesis | Review-first Synthesis Plan, interface improvements, validation gaps, rerun/revise/continue controls, and hold state |
+| 3:05-3:40 | Deployment and prototype review | GPT Image 2 prototype output or labelled visual prompt fallback, approval/rejection controls, and regeneration state |
+| 3:40-4:20 | Launch package | Build-preparation agents, implementation plan, component map, local static MVP package, launch next actions, and final package summary |
+| 4:20-4:45 | Verification and polish | Build succeeds, reload persists state, approval/rejection paths work, full browser validation matrix passes |
 
 ### 5.5 Non-Goals
 
@@ -194,7 +196,7 @@ The implementation should follow this timeboxed sequence. If time runs short, pr
 
 ## 8. Required Workspaces and Workflow Stages
 
-ConductorIQ must center the MVP around six core workspaces. Detailed agent activities may be shown inside these workspaces, but the navigation and implementation must not expand beyond these six areas for the 2 hour 30 minute MVP.
+ConductorIQ must center the MVP around six core workspaces. Detailed agent activities may be shown inside these workspaces, but the navigation and implementation must not expand beyond these six areas for the product-depth MVP.
 
 | Workspace | Purpose | Required MVP Outputs |
 | --- | --- | --- |
@@ -209,7 +211,7 @@ Detailed activities such as idea refinement, market validation, competitor analy
 
 ## 9. Agent System Requirements
 
-The platform must include visible specialized agents. Each agent should have a name, role, execution state, current task, progress indicator, outputs, logs, dependencies, and collaboration events. For the 2 hour 30 minute MVP, agents may be static definitions driven by a shared frontend state machine.
+The platform must include visible specialized agents. Each agent should have a name, role, execution state, current task, progress indicator, outputs, logs, dependencies, and collaboration events. For the product-depth MVP, agents may be static definitions driven by a shared frontend state machine.
 
 ### 9.1 Required Agents
 
@@ -342,7 +344,7 @@ Continuous execution should include:
 
 ### 10.5 MVP LangGraph Scope
 
-To keep the 2 hour 30 minute build feasible, the MVP LangGraph implementation should be intentionally small:
+To keep the product-depth build feasible, the MVP LangGraph implementation should be intentionally small:
 
 - Use `@langchain/langgraph` with a single local `StateGraph`.
 - Model the six top-level nodes as `intake`, `strategy`, `prdGeneration`, `synthesis`, `deployment`, and `launch`.
@@ -693,7 +695,7 @@ The MVP should use real OpenAI and Exa calls while keeping all storage local and
 
 Implementation should read keys from local environment variables and never commit secrets.
 
-Stitch MCP access must not block the 2 hour 30 minute MVP. If a Stitch MCP connector is available in the environment, Codex may inspect whether a ConductorIQ design/project is accessible and reference it as an external design source. If no Stitch MCP tool is exposed, the UI should continue using local `Assets/` references and simulated Stitch activity in agent logs and design cards.
+Stitch MCP access must not block the product-depth MVP. If a Stitch MCP connector is available in the environment, Codex may inspect whether a ConductorIQ design/project is accessible and reference it as an external design source. If no Stitch MCP tool is exposed, the UI should continue using local `Assets/` references and simulated Stitch activity in agent logs and design cards.
 
 Verified Stitch reference as of 2026-05-17:
 
@@ -866,7 +868,7 @@ interface MemoryEntry {
 
 ## 17. MVP Acceptance Criteria
 
-The MVP is acceptable within the 2 hour 30 minute build window when:
+The MVP is acceptable within the product-depth build window when:
 
 - A user can enter a rough idea and initialize a ConductorIQ project.
 - The system crafts, validates, and improves a structured prompt before downstream generation.
@@ -896,6 +898,41 @@ The MVP is acceptable within the 2 hour 30 minute build window when:
 - The product copy explicitly communicates LangGraph as the internal orchestration backbone.
 - The app builds successfully with no database and uses OpenAI/Exa keys only through local environment configuration.
 
+### 17.1 Full Workflow Validation Matrix
+
+The product should be validated against the complete intended workflow, not only a single happy path. Completion requires evidence for the following scenarios:
+
+| Scenario | Required Validation |
+| --- | --- |
+| Manual idea intake | User enters a rough idea and sees crafted prompt, prompt critique, improved prompt, and initialized graph state |
+| File-based intake | User imports a `.txt` or `.md` idea brief and the prompt lifecycle still runs |
+| Market validation | Strategy shows market leads, market signals, competitors, personas, risks, validation questions, source labels, and confidence score |
+| External fallback | If Exa or OpenAI is unavailable, fallback outputs are labelled and the workflow does not stall |
+| Comprehensive PRD | PRD Generation produces a detailed PRD artifact with sections comparable in depth and structure to this ConductorIQ PRD |
+| PRD review | PRD Reviewer surfaces missing sections, ambiguity flags, implementation gaps, and a PRD quality score |
+| Synthesis hold | Synthesis reviews upstream outputs, generates a comprehensive Synthesis Plan, and pauses before prototype/build progression |
+| Interface improvement | Interface Improvement Agent produces UI clarity, workflow coherence, visual hierarchy, copy, and trust/evidence critique |
+| Prototype generation | Deployment creates GPT Image 2 visual outputs or labelled visual prompt fallback cards |
+| Approval path | User approval unlocks Launch and build-preparation agents |
+| Rejection path | User rejection routes back to prompt revision, PRD revision, Synthesis, or prototype regeneration without unlocking Launch |
+| Launch package | Launch produces implementation plan, component map, approved prototype direction, final package, risks, and next actions |
+| Persistence | Reload restores current workspace, approval state, PRD content, artifacts, logs, scores, and memory |
+| Export | Static export includes improved prompt, comprehensive PRD, PRD review, market leads, synthesis plan, prototype direction, implementation plan, risks, and next actions |
+
+### 17.2 Incomplete Product Conditions
+
+The product should be considered incomplete if:
+
+- The workflow finishes directly after a compact PRD summary.
+- Synthesis does not pause for review or approval.
+- Prototype approval does not actually gate Launch/build-preparation outputs.
+- The generated PRD lacks strong hierarchy, detailed requirements, acceptance criteria, UX direction, technical constraints, risks, and implementation notes.
+- Strategy lacks market leads, validation questions, or source labels.
+- Interface improvement appears only as generic copy and does not critique UI clarity, workflow coherence, visual hierarchy, copy, and evidence trust.
+- Rejection/regeneration paths are missing.
+- Reload loses workflow or approval state.
+- Browser validation only proves that the app loads.
+
 ## 18. Risks and Mitigations
 
 | Risk | Impact | Mitigation |
@@ -924,7 +961,7 @@ The MVP is acceptable within the 2 hour 30 minute build window when:
 - Rich artifact version history.
 - Scheduled revalidation of startup ideas over time.
 
-Future roadmap items must not be implemented in the 2 hour 30 minute MVP unless the required acceptance criteria are already complete and verified.
+Future roadmap items must not be implemented in the product-depth MVP unless the required acceptance criteria are already complete and verified.
 
 ## 20. Source References
 

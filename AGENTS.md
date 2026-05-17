@@ -50,7 +50,9 @@ Reference: https://developers.openai.com/cookbook/examples/codex/using_goals_in_
 
 For this repository, the persistent implementation goal is:
 
-> Build ConductorIQ into a polished frontend-only local MVP that matches `PRD.md` as closely as possible within the hard 2 hour 30 minute MVP constraint.
+> Build ConductorIQ into a polished frontend-only local product workflow that matches `PRD.md` as closely as possible and demonstrates the full prompt-to-approved-MVP orchestration loop.
+
+The implementation target is no longer a quick shell or 10-minute demo pass. Fast completion is acceptable only when the deep completion gates below are genuinely implemented and verified. Codex must not mark a goal complete merely because the app builds, because the UI looks polished, or because one happy path reaches Launch.
 
 Completion evidence should include:
 
@@ -61,18 +63,31 @@ Completion evidence should include:
 - Visible multi-agent orchestration.
 - Generated artifacts from OpenAI, Exa, or OpenAI fallback.
 - Validation and critique loops.
+- Prompt craft, prompt validation, and prompt improvement artifacts.
+- Comprehensive generated PRD artifact and PRD review artifact.
+- Market leads, validation evidence, and evidence-source labels.
+- Synthesis Plan hold state before prototype/build progression.
+- GPT Image 2 prototype image output or labelled visual prompt fallback.
+- Explicit prototype approval state before build-preparation agents activate.
+- Launch package containing implementation plan, component map, prototype direction, PRD, market validation, risks, and next actions.
 - Updated `PROGRESS.md`.
 
-LangGraph completion evidence should include an implementation path where the local graph advances through Intake, Strategy, PRD Generation, Synthesis, Deployment, and Launch, including an Exa failure or insufficient-evidence branch that routes to OpenAI fallback.
+LangGraph completion evidence should include implementation paths where the local graph advances through Intake, Strategy, PRD Generation, Synthesis, Deployment, and Launch, including:
+
+- A normal path that reaches the Synthesis hold state.
+- An approval path where prototype approval unlocks Launch/build-preparation outputs.
+- A rejection or revision path where rejected prototype or weak synthesis routes back to prompt improvement, PRD revision, or prototype regeneration.
+- An Exa failure or insufficient-evidence branch that routes to OpenAI fallback and labels the evidence correctly.
 
 When the user starts work with `/goal`, Codex must treat the goal as an active implementation contract:
 
-- Continue working until the goal is complete, the 2 hour 30 minute MVP acceptance criteria are met, or a genuine blocker prevents progress.
+- Continue working until the goal is complete, the PRD acceptance criteria and deep completion gates are met, or a genuine blocker prevents progress.
 - Do not stop after planning, scaffolding, or partial implementation if the app is still not runnable.
+- Do not stop after a single happy-path implementation if approval gates, revision loops, PRD review, market lead validation, or persistence checks are missing.
 - Use `PROGRESS.md` as the live execution ledger and update it after each milestone.
 - Prefer making the next highest-priority working change over asking for clarification when the PRD provides a reasonable default.
 - If blocked, record the blocker, attempted fixes, and the next concrete recovery step in `PROGRESS.md`.
-- Mark the goal complete only after verification proves the local app runs or builds successfully.
+- Mark the goal complete only after verification proves the local app runs, builds successfully, and passes the full workflow validation matrix in Section 10.
 
 ## 4. Implementation Priorities
 
@@ -81,27 +96,33 @@ Prioritize in this order:
 1. App runs locally without errors.
 2. Six-workspace ConductorIQ shell: Intake, Strategy, PRD Generation, Synthesis, Deployment, and Launch.
 3. Core cinematic visual identity and layout.
-4. Idea intake and workflow activation.
-5. Minimal local LangGraph orchestration runtime.
-6. Agent roster and visible execution states.
-7. Strategy workspace with market signals, competitors, personas, risks, and validation confidence.
-8. PRD Generation and Synthesis workspaces with generated artifacts and final pursue/refine/reject recommendation.
-9. Deployment and Launch workspaces with MVP scope, readiness, and next actions.
-10. Polish, responsiveness, and demo reliability.
+4. Idea intake, prompt crafting, prompt validation, and prompt improvement.
+5. Local LangGraph orchestration runtime with approval gates and revision loops.
+6. Agent roster and visible execution states for prompt, PRD, market, prototype, approval, and launch agents.
+7. Strategy workspace with market leads, market signals, competitors, personas, risks, validation questions, source labels, and confidence scoring.
+8. PRD Generation workspace with a comprehensive generated PRD, section completeness, PRD review findings, and PRD quality score.
+9. Synthesis workspace with review-first behavior, comprehensive Synthesis Plan, interface improvement notes, and a hold state before continuation.
+10. Deployment workspace with GPT Image 2 prototype generation or visual prompt fallback, prototype review, and approval/rejection controls.
+11. Launch workspace with build-preparation agents, implementation plan, component map, static package export, readiness dashboard, and next actions.
+12. Polish, responsiveness, and demo reliability.
 
 Do not implement unrelated features outside the PRD unless required to make the MVP coherent, runnable, or demo-ready.
 
-Timeboxing rule: if a requirement cannot fit in the 2 hour 30 minute MVP window, implement the smallest believable visual simulation that satisfies the user-facing acceptance criteria and document the shortcut in `PROGRESS.md`.
+Depth rule: if a requirement cannot be fully implemented in one pass, implement the strongest working slice that preserves the full workflow contract and document the shortcut in `PROGRESS.md`. Do not remove approval gates, PRD review, market lead validation, or synthesis hold behavior just to finish quickly.
 
-Two-hour-thirty execution budget:
+Deep implementation budget:
 
-- 0:00-0:15: scaffold Vite React TypeScript app and TailwindCSS.
-- 0:15-0:40: build the cinematic shell and six-workspace navigation.
-- 0:40-1:05: implement intake, localStorage state, agents, logs, and a minimal LangGraph `StateGraph`.
-- 1:05-1:40: implement Strategy validation content: market signals, competitors, personas, risks, and scores.
-- 1:40-2:05: implement PRD Generation and Synthesis with critique loop and pursue/refine/reject recommendation.
-- 2:05-2:20: implement Deployment and Launch summaries plus local static MVP package download.
-- 2:20-2:30: verify build, reload persistence, and end-to-end demo flow.
+- 0:00-0:20: audit PRD, AGENTS, current implementation, dependency baseline, and gap list in `PROGRESS.md`.
+- 0:20-0:45: implement or refine shell, routing, persistence, agent roster, logs, and state model.
+- 0:45-1:15: implement prompt craft, prompt validation, improved prompt diff, and prompt quality scoring.
+- 1:15-1:50: implement Strategy market leads, market validation questions, competitor evidence, personas, risks, and fallback/real source labels.
+- 1:50-2:30: implement comprehensive PRD generation, PRD section completeness, PRD review findings, quality score, and revision loop.
+- 2:30-3:05: implement Synthesis review-first plan, interface improvement critique, validation gaps, rerun/revise/continue controls, and hold state.
+- 3:05-3:40: implement GPT Image 2 prototype generation or visual prompt fallback, prototype review, approval/rejection states, and regeneration loop.
+- 3:40-4:20: implement Launch build-preparation agents, implementation plan, component map, final MVP package, static export, and approval-backed next actions.
+- 4:20-4:45: run full validation matrix, browser scenarios, persistence reload, build, lint, and update `PROGRESS.md`.
+
+Do not artificially wait to consume time. The point of the longer budget is deeper product behavior and stronger verification, not idle time. If the work appears complete in under two hours, Codex must run the full validation matrix and perform a gap review against `PRD.md` before claiming completion.
 
 ## 5. Codex Agent Responsibilities
 
@@ -110,8 +131,13 @@ Codex should operate as a compact implementation team during `/goal` work. These
 - Product Extractor: read `PRD.md`, extract the six workspaces, acceptance criteria, constraints, real API requirements, and workflow states before coding.
 - Implementation Lead: build the Vite React TypeScript app, keep architecture simple, and prioritize runnable increments.
 - UI Builder: implement the cinematic frontend shell, workspace panels, agent cards, logs, scores, artifacts, and visual hierarchy from `Assets/`.
-- Workflow Engineer: implement localStorage persistence, local file import, static package download, minimal LangGraph `StateGraph` routing, deterministic UI ticks, OpenAI/Exa request lifecycle states, OpenAI fallback, agent state transitions, and recommendation scoring.
-- Verifier: run install/build/typecheck/browser verification where available and record results in `PROGRESS.md`.
+- Workflow Engineer: implement localStorage persistence, local file import, static package download, LangGraph `StateGraph` routing, deterministic UI ticks, OpenAI/Exa request lifecycle states, OpenAI fallback, agent state transitions, approval gates, revision loops, and recommendation scoring.
+- Prompt Systems Engineer: implement crafted prompt, prompt critique, improved prompt, prompt quality score, and prompt revision loop.
+- Research Validation Engineer: implement market leads, validation questions, competitor evidence, persona objections, source labels, confidence scoring, and Exa/OpenAI fallback labeling.
+- PRD Systems Engineer: implement comprehensive PRD generation, PRD section completeness, PRD reviewer findings, quality score, and revision requirements.
+- Prototype Systems Engineer: implement GPT Image 2 prototype generation or labelled fallback visual prompt cards, prototype approval/rejection, and regeneration states.
+- Launch Package Engineer: implement implementation plan, component map, build-preparation agent outputs, final package summary, and static export contents.
+- Verifier: run dependency/build/typecheck/lint/browser verification, full workflow scenarios, approval/rejection scenarios, and persistence reload checks; record results in `PROGRESS.md`.
 - Git Publisher: optional only after the build is verified or when the user explicitly asks for a commit/push.
 
 Codex should not spawn sub-agents unless the user explicitly requests delegated or parallel agent work. If sub-agents are requested, each sub-agent must receive a bounded task, a disjoint write scope, and this `AGENTS.md` context.
@@ -125,7 +151,7 @@ When asked to use Stitch MCP:
 - First use available tool discovery to check whether a Stitch MCP tool or connector is exposed in the current Codex environment.
 - If Stitch MCP is available, inspect whether a ConductorIQ project or design reference is accessible and record the result in `PROGRESS.md`.
 - If Stitch MCP is not available, do not block implementation. Record that Stitch access was unavailable and continue with local `Assets/` references plus simulated Stitch activity in the UI.
-- Do not add real Stitch API calls, credentials, backend routes, or MCP runtime dependencies during the 2 hour 30 minute MVP.
+- Do not add real Stitch API calls, credentials, backend routes, or MCP runtime dependencies during the product-depth MVP.
 
 Current verified Stitch access:
 
@@ -151,7 +177,7 @@ When implementing the MVP:
 
 - Build a frontend-only local application using React, TypeScript, Vite, and TailwindCSS.
 - Use the installed `@langchain/langgraph` and `@langchain/core` packages for orchestration.
-- Implement a compact local `StateGraph` with nodes for Intake, Strategy, PRD Generation, Synthesis, Deployment, and Launch.
+- Implement a local `StateGraph` with nodes for Intake, Strategy, PRD Generation, Synthesis, Deployment, and Launch, plus internal substeps for prompt validation, PRD review, synthesis hold, prototype approval, and launch build preparation.
 - Keep LangGraph state serializable so localStorage can persist snapshots, artifacts, logs, scores, and selected workspace.
 - Do not create extra top-level workspaces beyond Intake, Strategy, PRD Generation, Synthesis, Deployment, and Launch.
 - Do not implement databases, authentication, billing, queues, workers, or production infrastructure.
@@ -162,10 +188,13 @@ When implementing the MVP:
 - Use GPT Image 2 (`gpt-image-2`) for generated visual assets when image generation is needed.
 - Support importing a local `.txt` or `.md` idea brief through the browser File API.
 - Support downloading a local static MVP package from the Launch workspace; do not implement hosted deployment.
+- Generate and display comprehensive PRD artifacts, PRD review artifacts, synthesis plans, market leads, interface improvement reports, prototype approval records, and launch implementation plans.
+- Do not activate build-preparation/Launch implementation agents until prototype approval is explicit in state.
+- Preserve rejected and revision-requested states; do not silently skip approval checkpoints.
 - Represent Stitch MCP and Codex/Cursor as product architecture concepts and lightweight UI integration points.
 - Represent LangGraph visibly in the UI while also using it as the actual local workflow coordinator.
 - Prefer a coherent real API-backed workflow over mock-only output generation.
-- If time is tight, implement one reliable end-to-end LangGraph path before adding sophisticated branching.
+- If time is tight, implement one reliable full lifecycle path plus at least one rejection/revision branch before adding sophisticated branching.
 - Separate orchestration state, agent definitions, artifact data, and UI components.
 - Use deterministic state machines, request lifecycle states, staged artifact generation, and rotating logs so demos are stable.
 - Persist workflow state, generated artifacts, agent states, execution logs, validation scores, and PRD content with localStorage or IndexedDB.
@@ -182,16 +211,34 @@ Each update should include:
 - Known gaps or shortcuts.
 - Verification performed.
 - Next highest-priority task.
+- Current deep completion gate status.
+- Last browser scenario tested.
+- Last approval/rejection path tested.
+- Any requirement intentionally simulated or downgraded, with reason.
 
 Do not mark a requirement complete unless it is implemented and verified.
 
+`PROGRESS.md` must include a checklist with these categories:
+
+- Intake and prompt lifecycle.
+- Strategy and market validation.
+- Comprehensive PRD generation.
+- PRD review and revision.
+- Synthesis Plan and hold state.
+- GPT Image/prototype generation.
+- Prototype approval/rejection.
+- Launch build-preparation package.
+- Persistence and reload.
+- Browser verification.
+- Build/lint/typecheck verification.
+
 ## 9. GitHub Commit Discipline
 
-GitHub commits and pushes are optional during the 2 hour 30 minute MVP build. Building and verifying the app takes priority over publishing milestones.
+GitHub commits and pushes are optional during the product-depth MVP build. Building and verifying the app takes priority over publishing milestones.
 
 Working rules:
 
-- Commit only after a coherent milestone if verification has passed and doing so will not endanger the 2 hour 30 minute delivery window.
+- Commit only after a coherent milestone if verification has passed and doing so will not endanger the product-depth delivery window.
 - Keep commits small enough that each one has a clear purpose and can be reviewed independently.
 - Run the most relevant available verification before committing.
 - Do not commit broken or partially applied work unless the commit message explicitly marks it as a checkpoint and the user asked for that behavior.
@@ -214,6 +261,55 @@ After meaningful implementation changes, Codex should run the most relevant avai
 - Browser verification for frontend behavior when a dev server is available.
 
 If a check cannot run, record why in `PROGRESS.md` or the final response.
+
+### 10.1 Deep Completion Gates
+
+Codex must not mark a goal complete until all deep completion gates are either implemented and verified or explicitly documented as blocked with a defensible fallback:
+
+- Gate 1: Intake accepts typed idea and `.txt`/`.md` file import.
+- Gate 2: Prompt Architect produces a crafted prompt artifact.
+- Gate 3: Prompt Validator produces critique, improved prompt, and prompt quality score.
+- Gate 4: LangGraph records prompt validation before Strategy runs.
+- Gate 5: Strategy produces market leads, market signals, competitors, personas, risks, validation questions, evidence-source labels, and confidence score.
+- Gate 6: Exa/OpenAI real-call path is attempted when safely configured, and fallback path is clearly labelled when unavailable.
+- Gate 7: PRD Generation produces a comprehensive PRD artifact with strong hierarchy and implementation detail.
+- Gate 8: PRD Reviewer produces review findings, missing-section flags, and PRD quality score.
+- Gate 9: Synthesis produces a comprehensive Synthesis Plan and enters a visible hold state before prototype/build progression.
+- Gate 10: Interface Improvement produces UI critique, copy improvements, hierarchy feedback, and prototype readiness checklist.
+- Gate 11: Deployment produces GPT Image 2 images or labelled visual prompt fallback cards.
+- Gate 12: Prototype Review exposes approve, reject, and regenerate/revise states.
+- Gate 13: Launch/build-preparation agents remain locked until approval is recorded.
+- Gate 14: Approved path unlocks implementation plan, component map, launch package, and static export.
+- Gate 15: Rejected path routes back to prompt revision, PRD revision, synthesis, or prototype regeneration.
+- Gate 16: Reload restores current workflow state, artifacts, approval state, logs, scores, selected workspace, and PRD content.
+- Gate 17: Final package export contains improved prompt, comprehensive PRD, PRD review, market leads, synthesis plan, prototype direction, implementation plan, risks, and next actions.
+
+### 10.2 Browser Validation Matrix
+
+Browser verification must test more than one happy path. At minimum, verify and record:
+
+- Scenario A: New idea entered manually, workflow reaches Synthesis hold, and Launch remains locked before approval.
+- Scenario B: User approves prototype direction, workflow unlocks Launch/build-preparation outputs, and static export is available.
+- Scenario C: User rejects prototype direction, workflow returns to revision/regeneration state and does not unlock Launch.
+- Scenario D: Reload during or after workflow restores state correctly.
+- Scenario E: Strategy shows market leads, competitors, personas, risks, and source labels.
+- Scenario F: PRD Generation shows comprehensive PRD content and PRD review findings.
+- Scenario G: Synthesis shows comprehensive plan and interface improvement notes.
+- Scenario H: Fallback mode clearly labels unavailable external integrations and still completes the local workflow.
+
+### 10.3 Completion Bar
+
+The completion bar is intentionally high. A run is incomplete if any of the following are true:
+
+- The app only shows generic artifact cards without workspace-specific product behavior.
+- The workflow skips prompt validation.
+- The generated PRD is only a short summary.
+- Market validation lacks market leads or validation questions.
+- Synthesis immediately proceeds to Launch without a hold state.
+- Prototype approval is only decorative and does not gate Launch/build outputs.
+- Rejection or revision path is missing.
+- Reload loses approval state, PRD content, logs, or artifacts.
+- Browser verification only checks that the app loads.
 
 ## 11. UX Discipline
 
@@ -246,7 +342,7 @@ Avoid:
 - Microservices.
 - Unrelated dashboards.
 - Features not grounded in the PRD.
-- Work that does not help complete the 2 hour 30 minute MVP acceptance criteria.
+- Work that does not help complete the product-depth MVP acceptance criteria.
 
 Prefer:
 

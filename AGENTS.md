@@ -29,9 +29,10 @@ Before implementing product changes, Codex must:
 1. Read `PRD.md` fully.
 2. Extract required pages, components, workflows, data structures, states, and constraints.
 3. Inspect the existing codebase.
-4. Compare the PRD requirements against the current implementation.
-5. Update `PROGRESS.md` with an implementation checklist based on the PRD.
-6. Begin implementation from the highest-priority incomplete requirement.
+4. Check installed dependencies with `npm ls --depth=0` and confirm the required MVP packages are present.
+5. Compare the PRD requirements against the current implementation.
+6. Update `PROGRESS.md` with an implementation checklist based on the PRD.
+7. Begin implementation from the highest-priority incomplete requirement.
 
 If `PROGRESS.md` does not exist, create it before starting product implementation.
 
@@ -140,10 +141,16 @@ LangGraph is part of the ConductorIQ product architecture. The MVP application m
 
 Codex does not need to use LangGraph as its own development workflow. Codex may use normal local development tools and implementation practices. ConductorIQ itself, however, should install and use `@langchain/langgraph` during implementation.
 
+Current dependency baseline:
+
+- `package.json` and `package-lock.json` are present.
+- React, React DOM, Vite, TypeScript, TailwindCSS, `@tailwindcss/vite`, `@langchain/langgraph`, `@langchain/core`, `openai`, `exa-js`, `lucide-react`, and `clsx` have been installed locally.
+- Future Codex runs should verify this baseline with `npm ls --depth=0` before coding and should run `npm install` only if packages are missing or the lockfile is inconsistent.
+
 When implementing the MVP:
 
 - Build a frontend-only local application using React, TypeScript, Vite, and TailwindCSS.
-- Add `@langchain/langgraph` and `@langchain/core` if required by the implementation.
+- Use the installed `@langchain/langgraph` and `@langchain/core` packages for orchestration.
 - Implement a compact local `StateGraph` with nodes for Intake, Strategy, PRD Generation, Synthesis, Deployment, and Launch.
 - Keep LangGraph state serializable so localStorage can persist snapshots, artifacts, logs, scores, and selected workspace.
 - Do not create extra top-level workspaces beyond Intake, Strategy, PRD Generation, Synthesis, Deployment, and Launch.
@@ -199,6 +206,7 @@ If GitHub authentication fails because an environment token is invalid, prefer u
 
 After meaningful implementation changes, Codex should run the most relevant available checks:
 
+- Dependency check with `npm ls --depth=0`.
 - Typecheck.
 - Build.
 - Lint, if configured.

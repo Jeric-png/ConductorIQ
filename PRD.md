@@ -573,6 +573,8 @@ The interface should continuously signal autonomy:
 - Browser localStorage or IndexedDB.
 - Local LangGraph orchestration runtime with real OpenAI + Exa validation calls.
 
+As of 2026-05-17, the local repository has `package.json` and `package-lock.json` with the MVP dependency baseline installed: React, React DOM, Vite, TypeScript, TailwindCSS, `@tailwindcss/vite`, `@langchain/langgraph`, `@langchain/core`, `openai`, `exa-js`, `lucide-react`, and `clsx`. Implementation should verify this with `npm ls --depth=0` before coding and reinstall only if the lockfile or installed modules are inconsistent.
+
 ### 15.2 API-Backed Product Architecture
 
 The MVP should use real OpenAI and Exa calls while keeping all storage local and avoiding databases.
@@ -615,6 +617,8 @@ For the hackathon MVP, implementation must use:
 - UI-first architecture that can later be connected to real integrations.
 
 The MVP must run without a database. If secrets cannot be safely called from the browser, use a minimal local API proxy for OpenAI and Exa while keeping all persistence in localStorage. The local LangGraph graph must remain lightweight enough to run during the demo without hosted workflow infrastructure.
+
+Dependency verification is part of the implementation contract. Before building features, confirm that `@langchain/langgraph`, `@langchain/core`, `openai`, `exa-js`, React, Vite, TypeScript, and TailwindCSS are installed and available from the current lockfile.
 
 ## 16. Suggested TypeScript Data Models
 

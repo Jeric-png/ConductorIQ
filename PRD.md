@@ -21,7 +21,7 @@ The core product promise is:
 
 > ConductorIQ autonomously coordinates continuously running AI agents to validate startup ideas and produce evidence-backed MVP recommendations.
 
-The MVP should demonstrate the orchestration experience, persistent workflow behavior, visible agent collaboration, artifact generation, validation loops, and cinematic execution state as a local application. It should use real OpenAI and Exa API calls for validation where possible, with OpenAI fallback when Exa is unavailable. It must not include authentication, billing, databases, queues, or production infrastructure. The implementation must be scoped to a 2 hour 30 minute build window.
+The MVP should demonstrate the orchestration experience, persistent workflow behavior, visible agent collaboration, artifact generation, validation loops, and cinematic execution state as a local application. It should use a real local LangGraph workflow to coordinate the validation agents, real OpenAI and Exa API calls for validation where possible, and OpenAI fallback when Exa is unavailable. It must not include authentication, billing, databases, queues, LangGraph Cloud, or production infrastructure. The implementation must be scoped to a 2 hour 30 minute build window.
 
 ## 2. Product Vision
 
@@ -110,14 +110,14 @@ Allowed shortcuts:
 
 - Use OpenAI fallback content only when Exa calls fail, time out, or return insufficient data.
 - Use CSS-built panels, cards, graphs, and mock diagrams instead of real charting or graph libraries.
-- Simulate LangGraph and Codex/Cursor orchestration as UI concepts only.
+- Use a minimal real LangGraph `StateGraph` to route the six-workspace validation workflow locally.
 - Represent design assets as references rather than generating new assets.
 - Export the final static MVP package as downloadable local files instead of building cloud deployment or database persistence.
 
 Out of scope for the 2 hour 30 minute MVP unless all required items are complete:
 
 - Database-backed persistence.
-- Real LangGraph execution.
+- LangGraph Cloud, hosted durable workflows, or database-backed LangGraph checkpointing.
 - Complex graph editing.
 - Multiple projects.
 - Cloud deployment flows.
@@ -176,11 +176,11 @@ The implementation should follow this timeboxed sequence. If time runs short, pr
 1. The user enters a rough startup or software idea, for example: "Build an AI-native cybersecurity SOC assistant."
 2. Alternatively, the user may select a local `.txt` or `.md` idea brief file to prefill Intake.
 3. ConductorIQ initializes a project and stores the raw idea in project memory.
-4. The UI represents a LangGraph-style orchestration engine decomposing the idea into the six required workspaces.
+4. A local LangGraph `StateGraph` decomposes the idea into the six required workspaces.
 5. Specialized agents execute idea refinement, market research, competitor analysis, persona validation, risk analysis, PRD generation, synthesis, deployment-readiness, and launch recommendation tasks using OpenAI and Exa where possible.
 6. Generated artifacts appear progressively in the active workspace and right-side context panel.
 7. Validation agents critique market evidence, persona fit, competitor pressure, MVP scope, and launch risk.
-8. The local orchestration runtime routes execution based on task completion, dependencies, validation results, critique outcomes, and workflow state.
+8. The local LangGraph orchestration runtime routes execution based on task completion, dependencies, validation results, critique outcomes, and workflow state.
 9. OpenAI and Exa activity appears in logs, cards, artifacts, and recommendation evidence; if Exa fails, OpenAI generates a clearly labelled fallback market-research synthesis.
 10. The system revisits weak assumptions and improves the recommendation autonomously.
 11. The final output becomes an evidence-backed MVP Foundation Package with a pursue, refine, or reject recommendation.
@@ -258,7 +258,7 @@ Agents should appear to collaborate through:
 
 LangGraph is part of the ConductorIQ product architecture itself. It is the internal orchestration engine that ConductorIQ uses to coordinate agents, manage workflow state, route tasks, trigger validation loops, and support continuous execution.
 
-Codex does not need to use LangGraph to build this project. Codex may implement the application using its normal development workflow, tools, and internal process.
+Codex does not need to use LangGraph as its own development workflow. However, the ConductorIQ application itself must include a minimal local LangGraph implementation for the MVP. The implementation should use `@langchain/langgraph` and a compact `StateGraph` that coordinates the six required workspaces and agent steps without LangGraph Cloud, external workers, queues, or database-backed checkpointing.
 
 ### 10.1 LangGraph Responsibilities
 
@@ -309,7 +309,7 @@ The orchestration engine should route work based on:
 
 ### 10.4 Continuous Execution
 
-ConductorIQ should feel continuously active. For this MVP, workflow progression should be driven by real OpenAI and Exa calls where possible, with deterministic local state transitions for visual progress, retries, and status updates. The UI should describe a future LangGraph-backed engine, but the current MVP must not require LangGraph runtime execution, databases, queues, or production-hosted jobs.
+ConductorIQ should feel continuously active. For this MVP, workflow progression should be driven by a real local LangGraph `StateGraph`, real OpenAI and Exa calls where possible, and deterministic local state transitions for visual progress, retries, and status updates. LangGraph should route the major workflow stages and agent handoffs; UI timers may animate progress and logs, but they must not replace the graph as the primary workflow coordinator. The current MVP must not require LangGraph Cloud, databases, queues, or production-hosted jobs.
 
 Continuous execution should include:
 
@@ -322,7 +322,20 @@ Continuous execution should include:
 - Readiness score recalculation.
 - Console logs and graph animation.
 
-### 10.5 Goal-Inspired Execution Contract
+### 10.5 MVP LangGraph Scope
+
+To keep the 2 hour 30 minute build feasible, the MVP LangGraph implementation should be intentionally small:
+
+- Use `@langchain/langgraph` with a single local `StateGraph`.
+- Model the six top-level nodes as `intake`, `strategy`, `prdGeneration`, `synthesis`, `deployment`, and `launch`.
+- Keep graph state serializable so snapshots can be persisted to localStorage.
+- Route Exa failure or insufficient evidence to an OpenAI fallback branch.
+- Route weak validation confidence to a critique or revision pass before final synthesis.
+- Keep browser UI state, artifacts, logs, scores, and selected workspace in localStorage.
+- Do not use LangGraph Cloud, hosted workers, external queues, or a database checkpointer.
+- If time is tight, prioritize one successful end-to-end graph path over sophisticated branching.
+
+### 10.6 Goal-Inspired Execution Contract
 
 The product should borrow the practical operating pattern described by OpenAI's Codex Goals guidance: persistent objectives should have a clear outcome, verification surface, constraints, iteration policy, and blocked stop condition.
 
@@ -532,7 +545,8 @@ The interface should continuously signal autonomy:
 - Do not implement databases.
 - Do not implement production backend services.
 - Do not implement queues or workers.
-- Do not require LangGraph, Stitch MCP, Codex, or Cursor integrations to be functional at runtime.
+- Do not require LangGraph Cloud, Stitch MCP, Codex, or Cursor integrations to be functional at runtime.
+- Do not use database-backed LangGraph checkpointing.
 
 ## 14. Non-Functional Requirements
 
@@ -554,8 +568,10 @@ The interface should continuously signal autonomy:
 - TypeScript.
 - Vite.
 - TailwindCSS.
+- `@langchain/langgraph`.
+- `@langchain/core` if required by the LangGraph implementation.
 - Browser localStorage or IndexedDB.
-- Local orchestration runtime with real OpenAI + Exa validation calls.
+- Local LangGraph orchestration runtime with real OpenAI + Exa validation calls.
 
 ### 15.2 API-Backed Product Architecture
 
@@ -564,7 +580,7 @@ The MVP should use real OpenAI and Exa calls while keeping all storage local and
 - OpenAI should power reasoning, synthesis, persona simulation, risk analysis, PRD generation, critique, fallback market research, and final recommendation.
 - Exa should power market research, competitor discovery, and external evidence gathering.
 - GPT Image 2 (`gpt-image-2`) should power generated visual assets, concept images, or launch/hero imagery when image generation is needed.
-- LangGraph remains the future orchestration engine concept represented in the UI.
+- LangGraph should execute the local agent workflow through a compact `StateGraph` and also be represented clearly in the UI as the orchestration backbone.
 - Stitch MCP remains an optional design reference and screen-generation tool, not a runtime dependency.
 - Codex/Cursor-style implementation agents remain MVP scaffolding concepts represented in the UI.
 
@@ -588,8 +604,9 @@ Verified Stitch reference as of 2026-05-17:
 For the hackathon MVP, implementation must use:
 
 - In-memory orchestration plus localStorage persistence.
+- A minimal local LangGraph `StateGraph` for workspace routing and agent handoffs.
 - Static agent definitions.
-- Deterministic frontend state machines.
+- Deterministic frontend state machines for UI animation and progress display.
 - Real OpenAI + Exa request lifecycle states.
 - OpenAI fallback outputs when Exa fails or times out.
 - Staged artifact generation.
@@ -597,7 +614,7 @@ For the hackathon MVP, implementation must use:
 - GPT Image 2 for generated visual artifacts when required.
 - UI-first architecture that can later be connected to real integrations.
 
-The MVP must run without a database. If secrets cannot be safely called from the browser, use a minimal local API proxy for OpenAI and Exa while keeping all persistence in localStorage. It should still model the intended production architecture faithfully enough that LangGraph's future role is clear.
+The MVP must run without a database. If secrets cannot be safely called from the browser, use a minimal local API proxy for OpenAI and Exa while keeping all persistence in localStorage. The local LangGraph graph must remain lightweight enough to run during the demo without hosted workflow infrastructure.
 
 ## 16. Suggested TypeScript Data Models
 
@@ -728,10 +745,11 @@ interface MemoryEntry {
 The MVP is acceptable within the 2 hour 30 minute build window when:
 
 - A user can enter a rough idea and initialize a ConductorIQ project.
+- The MVP uses a real local LangGraph `StateGraph` to execute at least one end-to-end path across Intake, Strategy, PRD Generation, Synthesis, Deployment, and Launch.
 - The UI clearly looks like an autonomous market-validation workspace, not a chatbot.
 - The six required workspaces are visible: Intake, Strategy, PRD Generation, Synthesis, Deployment, and Launch.
 - At least 8 specialized agents are visible with meaningful states.
-- Workflow stages progress visibly over time through deterministic frontend simulation.
+- Workflow stages progress visibly over time through local LangGraph routing plus deterministic frontend progress animation.
 - The orchestration graph, timeline, or stage system shows dependencies and active routing.
 - Artifacts appear progressively and reference upstream context.
 - QA or validation loops visibly critique and revise at least one output.
@@ -753,13 +771,13 @@ The MVP is acceptable within the 2 hour 30 minute build window when:
 | LangGraph role is misunderstood | Architecture confusion | State clearly that LangGraph is product runtime architecture, not Codex's build workflow |
 | MVP overengineers backend | Missed demo deadline | Use localStorage for persistence and only a minimal local API proxy if needed to protect OpenAI/Exa secrets |
 | Autonomy feels fake | Weak demo credibility | Make state transitions coherent, dependency-driven, and tied to artifacts |
-| Real integration scope expands too far | Broken demo or scope creep | Use only OpenAI + Exa for validation, GPT Image 2 for visuals, and keep LangGraph/Stitch/Codex as lightweight UI concepts |
+| Real integration scope expands too far | Broken demo or scope creep | Use only a minimal local LangGraph `StateGraph`, OpenAI + Exa for validation, GPT Image 2 for visuals, and keep Stitch/Codex as lightweight UI concepts |
 | Visuals feel generic | Reduced impact | Follow screenshot-inspired cinematic dark UI with neon operational details |
 | Workflow stalls | Bad live experience | Ensure timer-driven progression and retry fallback paths |
 
 ## 19. Future Roadmap
 
-- Real LangGraph-backed workflow execution.
+- LangGraph Cloud-backed durable workflow execution.
 - Hosted durable workflows.
 - More comprehensive OpenAI generation for every agent.
 - Deeper Exa market research integration.

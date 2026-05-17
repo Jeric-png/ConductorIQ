@@ -56,10 +56,13 @@ Completion evidence should include:
 - Running app or successful build output.
 - Implemented pages and components mapped to PRD requirements.
 - Persistent workflow state.
+- Local LangGraph `StateGraph` execution across the required workspaces.
 - Visible multi-agent orchestration.
 - Generated artifacts from OpenAI, Exa, or OpenAI fallback.
 - Validation and critique loops.
 - Updated `PROGRESS.md`.
+
+LangGraph completion evidence should include an implementation path where the local graph advances through Intake, Strategy, PRD Generation, Synthesis, Deployment, and Launch, including an Exa failure or insufficient-evidence branch that routes to OpenAI fallback.
 
 When the user starts work with `/goal`, Codex must treat the goal as an active implementation contract:
 
@@ -78,7 +81,7 @@ Prioritize in this order:
 2. Six-workspace ConductorIQ shell: Intake, Strategy, PRD Generation, Synthesis, Deployment, and Launch.
 3. Core cinematic visual identity and layout.
 4. Idea intake and workflow activation.
-5. Deterministic frontend orchestration state machine.
+5. Minimal local LangGraph orchestration runtime.
 6. Agent roster and visible execution states.
 7. Strategy workspace with market signals, competitors, personas, risks, and validation confidence.
 8. PRD Generation and Synthesis workspaces with generated artifacts and final pursue/refine/reject recommendation.
@@ -93,7 +96,7 @@ Two-hour-thirty execution budget:
 
 - 0:00-0:15: scaffold Vite React TypeScript app and TailwindCSS.
 - 0:15-0:40: build the cinematic shell and six-workspace navigation.
-- 0:40-1:05: implement intake, localStorage state, agents, logs, and deterministic workflow ticks.
+- 0:40-1:05: implement intake, localStorage state, agents, logs, and a minimal LangGraph `StateGraph`.
 - 1:05-1:40: implement Strategy validation content: market signals, competitors, personas, risks, and scores.
 - 1:40-2:05: implement PRD Generation and Synthesis with critique loop and pursue/refine/reject recommendation.
 - 2:05-2:20: implement Deployment and Launch summaries plus local static MVP package download.
@@ -106,7 +109,7 @@ Codex should operate as a compact implementation team during `/goal` work. These
 - Product Extractor: read `PRD.md`, extract the six workspaces, acceptance criteria, constraints, real API requirements, and workflow states before coding.
 - Implementation Lead: build the Vite React TypeScript app, keep architecture simple, and prioritize runnable increments.
 - UI Builder: implement the cinematic frontend shell, workspace panels, agent cards, logs, scores, artifacts, and visual hierarchy from `Assets/`.
-- Workflow Engineer: implement localStorage persistence, local file import, static package download, deterministic workflow ticks, OpenAI/Exa request lifecycle states, OpenAI fallback, agent state transitions, and recommendation scoring.
+- Workflow Engineer: implement localStorage persistence, local file import, static package download, minimal LangGraph `StateGraph` routing, deterministic UI ticks, OpenAI/Exa request lifecycle states, OpenAI fallback, agent state transitions, and recommendation scoring.
 - Verifier: run install/build/typecheck/browser verification where available and record results in `PROGRESS.md`.
 - Git Publisher: optional only after the build is verified or when the user explicitly asks for a commit/push.
 
@@ -133,24 +136,29 @@ Current verified Stitch access:
 
 ## 7. Product Architecture Discipline
 
-LangGraph is part of the ConductorIQ product architecture. It should be represented as the internal orchestration engine that coordinates agents, state, routing, validation loops, retries, dependencies, approval checkpoints, and continuous execution.
+LangGraph is part of the ConductorIQ product architecture. The MVP application must use a real local LangGraph workflow as the internal orchestration engine that coordinates agents, state, routing, validation loops, retries, dependencies, approval checkpoints, and continuous execution.
 
-Codex does not need to use LangGraph as its own development workflow. Codex may use normal local development tools and implementation practices.
+Codex does not need to use LangGraph as its own development workflow. Codex may use normal local development tools and implementation practices. ConductorIQ itself, however, should install and use `@langchain/langgraph` during implementation.
 
 When implementing the MVP:
 
 - Build a frontend-only local application using React, TypeScript, Vite, and TailwindCSS.
+- Add `@langchain/langgraph` and `@langchain/core` if required by the implementation.
+- Implement a compact local `StateGraph` with nodes for Intake, Strategy, PRD Generation, Synthesis, Deployment, and Launch.
+- Keep LangGraph state serializable so localStorage can persist snapshots, artifacts, logs, scores, and selected workspace.
 - Do not create extra top-level workspaces beyond Intake, Strategy, PRD Generation, Synthesis, Deployment, and Launch.
 - Do not implement databases, authentication, billing, queues, workers, or production infrastructure.
+- Do not use LangGraph Cloud, hosted checkpointers, database-backed checkpointing, queues, or worker infrastructure.
 - Use the configured OpenAI and Exa keys for real validation calls.
 - If browser-side calls would expose secrets, use the smallest possible local API proxy for OpenAI and Exa only; keep all persistence in localStorage.
 - Use OpenAI as the fallback provider when Exa fails, times out, or returns insufficient market evidence.
 - Use GPT Image 2 (`gpt-image-2`) for generated visual assets when image generation is needed.
 - Support importing a local `.txt` or `.md` idea brief through the browser File API.
 - Support downloading a local static MVP package from the Launch workspace; do not implement hosted deployment.
-- Represent LangGraph, Stitch MCP, and Codex/Cursor as product architecture concepts and lightweight UI integration points.
+- Represent Stitch MCP and Codex/Cursor as product architecture concepts and lightweight UI integration points.
+- Represent LangGraph visibly in the UI while also using it as the actual local workflow coordinator.
 - Prefer a coherent real API-backed workflow over mock-only output generation.
-- Keep the architecture modular enough to replace the local workflow runner with LangGraph later.
+- If time is tight, implement one reliable end-to-end LangGraph path before adding sophisticated branching.
 - Separate orchestration state, agent definitions, artifact data, and UI components.
 - Use deterministic state machines, request lifecycle states, staged artifact generation, and rotating logs so demos are stable.
 - Persist workflow state, generated artifacts, agent states, execution logs, validation scores, and PRD content with localStorage or IndexedDB.

@@ -85,6 +85,39 @@ export interface Artifact {
   updatedAt: string;
 }
 
+export interface MarketSignal {
+  label: string;
+  value: string;
+  sentiment: "positive" | "neutral" | "negative";
+  source: "exa" | "openai" | "fallback";
+}
+
+export interface Competitor {
+  name: string;
+  category: string;
+  threat: "low" | "medium" | "high";
+  positioningGap: string;
+}
+
+export interface PersonaReaction {
+  persona: string;
+  quote: string;
+  confidence: number;
+  objection: string;
+}
+
+export interface RiskItem {
+  risk: string;
+  severity: "low" | "medium" | "high";
+  mitigation: string;
+}
+
+export interface TaskItem {
+  title: string;
+  owner: string;
+  status: "queued" | "running" | "done";
+}
+
 export interface ExecutionLog {
   id: string;
   timestamp: string;
@@ -127,6 +160,7 @@ export interface ProjectState {
   validationConfidence: number;
   recommendation: "pending" | "pursue" | "refine" | "reject";
   integrationMode: "real-ready" | "fallback";
+  operatingMode: "autonomous" | "paused" | "completed";
   generatedAt: string;
   updatedAt: string;
 }
@@ -138,6 +172,11 @@ export interface OrchestrationPackage {
   artifacts: Artifact[];
   logs: ExecutionLog[];
   memory: MemoryEntry[];
+  marketSignals: MarketSignal[];
+  competitors: Competitor[];
+  personas: PersonaReaction[];
+  risks: RiskItem[];
+  tasks: TaskItem[];
 }
 
 export interface PersistedAppState extends OrchestrationPackage {

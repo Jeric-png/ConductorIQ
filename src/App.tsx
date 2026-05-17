@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import type { ReactNode } from "react";
 import {
   Activity,
   Boxes,
@@ -11,11 +12,14 @@ import {
   Gauge,
   GitBranch,
   Layers3,
+  Pause,
   Play,
   Radar,
   RefreshCcw,
   Rocket,
+  Search,
   ShieldCheck,
+  StepForward,
   Sparkles,
   Upload,
   Zap,
@@ -72,9 +76,10 @@ const loadStoredState = (): {
     const visibleRaw = window.localStorage.getItem(STORAGE_KEY);
     const fullRaw = window.localStorage.getItem(FULL_PACKAGE_KEY);
     if (visibleRaw) {
+      const visible = normalizeRuntime(JSON.parse(visibleRaw) as PersistedAppState);
       return {
-        visible: JSON.parse(visibleRaw) as PersistedAppState,
-        full: fullRaw ? (JSON.parse(fullRaw) as OrchestrationPackage) : null,
+        visible,
+        full: fullRaw ? normalizePackage(JSON.parse(fullRaw) as OrchestrationPackage) : null,
       };
     }
   } catch {
@@ -85,6 +90,25 @@ const loadStoredState = (): {
   const emptyPackage = createEmptyPackage();
   return { visible: { ...emptyPackage, selectedWorkspace: "intake", isRunning: false }, full: null };
 };
+
+const normalizePackage = (value: OrchestrationPackage): OrchestrationPackage => ({
+  ...value,
+  marketSignals: value.marketSignals ?? [],
+  competitors: value.competitors ?? [],
+  personas: value.personas ?? [],
+  risks: value.risks ?? [],
+  tasks: value.tasks ?? [],
+  project: {
+    ...value.project,
+    operatingMode: value.project.operatingMode ?? (value.project.status === "completed" ? "completed" : "paused"),
+  },
+});
+
+const normalizeRuntime = (value: PersistedAppState): PersistedAppState => ({
+  ...normalizePackage(value),
+  selectedWorkspace: value.selectedWorkspace ?? "intake",
+  isRunning: value.isRunning ?? false,
+});
 
 const formatTime = (timestamp: string) =>
   new Intl.DateTimeFormat("en", {
@@ -112,6 +136,7 @@ function App() {
   const [fullPackage, setFullPackage] = useState<OrchestrationPackage | null>(initialState.full);
   const [isGenerating, setIsGenerating] = useState(false);
   const [error, setError] = useState("");
+  const [tickMs, setTickMs] = useState(1600);
   const fullPackageRef = useRef<OrchestrationPackage | null>(initialState.full);
 
   useEffect(() => {
@@ -140,10 +165,10 @@ function App() {
           isRunning: visible.project.status !== "completed",
         };
       });
-    }, 1600);
+    }, tickMs);
 
     return () => window.clearInterval(timer);
-  }, [runtime.isRunning]);
+  }, [runtime.isRunning, tickMs]);
 
   const activeWorkspace = workspaces.find((workspace) => workspace.id === runtime.selectedWorkspace) ?? workspaces[0];
   const activeArtifacts = runtime.artifacts.filter((artifact) => artifact.sourceNodeId === activeWorkspace.id);
@@ -208,6 +233,41 @@ function App() {
     URL.revokeObjectURL(url);
   };
 
+  const pauseWorkflow = () => {
+    setRuntime((current) => ({
+      ...current,
+      isRunning: false,
+      project: { ...current.project, operatingMode: "paused" },
+    }));
+  };
+
+  const resumeWorkflow = () => {
+    if (!fullPackageRef.current || runtime.project.status === "completed") {
+      return;
+    }
+    setRuntime((current) => ({
+      ...current,
+      isRunning: true,
+      project: { ...current.project, operatingMode: "autonomous" },
+    }));
+  };
+
+  const stepWorkflow = () => {
+    if (!fullPackageRef.current) {
+      return;
+    }
+    setRuntime((current) => {
+      const nextStep = Math.min(current.project.currentStep + 1, workspaces.length - 1);
+      const visible = revealPackageStep(fullPackageRef.current as OrchestrationPackage, nextStep);
+      return {
+        ...visible,
+        selectedWorkspace: visible.project.activeWorkspace,
+        isRunning: false,
+        project: { ...visible.project, operatingMode: visible.project.status === "completed" ? "completed" : "paused" },
+      };
+    });
+  };
+
   return (
     <div className="min-h-screen overflow-hidden bg-[#04050b] text-slate-100">
       <div className="fixed inset-0 bg-grid opacity-60" />
@@ -254,6 +314,11 @@ function App() {
               onStart={startWorkflow}
               isGenerating={isGenerating}
               onReset={resetWorkflow}
+              onPause={pauseWorkflow}
+              onResume={resumeWorkflow}
+              onStep={stepWorkflow}
+              tickMs={tickMs}
+              setTickMs={setTickMs}
             />
             <div className="grid flex-1 gap-4 overflow-y-auto p-4 xl:grid-cols-[1.1fr_0.9fr]">
               <section className="space-y-4">
@@ -267,7 +332,7 @@ function App() {
                     error={error}
                   />
                 ) : (
-                  <WorkspaceArtifacts workspaceId={activeWorkspace.id} artifacts={activeArtifacts} runtime={runtime} />
+                  <WorkspaceIntelligence workspaceId={activeWorkspace.id} artifacts={activeArtifacts} runtime={runtime} />
                 )}
                 <OrchestrationGraph nodes={runtime.nodes} activeWorkspace={runtime.project.activeWorkspace} />
               </section>
@@ -285,6 +350,7 @@ function App() {
               memory={runtime.memory}
               artifacts={runtime.artifacts}
               project={runtime.project}
+              runtime={runtime}
               downloadPackage={downloadPackage}
             />
           </aside>
@@ -399,12 +465,22 @@ function WorkspaceHeader({
   onStart,
   isGenerating,
   onReset,
+  onPause,
+  onResume,
+  onStep,
+  tickMs,
+  setTickMs,
 }: {
   workspace: (typeof workspaces)[number];
   runtime: PersistedAppState;
   onStart: () => void;
   isGenerating: boolean;
   onReset: () => void;
+  onPause: () => void;
+  onResume: () => void;
+  onStep: () => void;
+  tickMs: number;
+  setTickMs: (value: number) => void;
 }) {
   return (
     <div className="border-b border-white/10 p-5">
@@ -417,6 +493,34 @@ function WorkspaceHeader({
           <p className="mt-1 max-w-2xl text-sm leading-6 text-slate-400">{workspace.description}</p>
         </div>
         <div className="flex flex-wrap gap-2">
+          <select
+            className="rounded-full border border-white/10 bg-white/[0.055] px-3 py-2 text-xs font-semibold text-slate-200 outline-none"
+            value={tickMs}
+            onChange={(event) => setTickMs(Number(event.target.value))}
+            aria-label="Workflow speed"
+          >
+            <option value={2400}>Deliberate</option>
+            <option value={1600}>Standard</option>
+            <option value={850}>Rapid demo</option>
+          </select>
+          <button
+            className="btn-secondary"
+            type="button"
+            onClick={runtime.isRunning ? onPause : onResume}
+            disabled={runtime.project.status === "idle" || runtime.project.status === "completed"}
+          >
+            {runtime.isRunning ? <Pause size={15} /> : <Play size={15} />}
+            {runtime.isRunning ? "Pause" : "Resume"}
+          </button>
+          <button
+            className="btn-secondary"
+            type="button"
+            onClick={onStep}
+            disabled={runtime.project.status === "idle" || runtime.project.status === "completed"}
+          >
+            <StepForward size={15} />
+            Step
+          </button>
           <button className="btn-secondary" type="button" onClick={onReset}>
             <RefreshCcw size={15} />
             Reset
@@ -502,7 +606,7 @@ function IntakeSignal({
   );
 }
 
-function WorkspaceArtifacts({
+function WorkspaceIntelligence({
   workspaceId,
   artifacts,
   runtime,
@@ -525,12 +629,132 @@ function WorkspaceArtifacts({
 
   return (
     <div className="space-y-3">
+      <WorkspaceBoard workspaceId={workspaceId} runtime={runtime} />
       {artifacts.map((artifact) => (
         <ArtifactCard key={artifact.id} artifact={artifact} />
       ))}
       {workspaceId === "synthesis" ? (
         <DecisionCard recommendation={runtime.project.recommendation} confidence={runtime.project.validationConfidence} />
       ) : null}
+    </div>
+  );
+}
+
+function WorkspaceBoard({
+  workspaceId,
+  runtime,
+}: {
+  workspaceId: WorkspaceId;
+  runtime: PersistedAppState;
+}) {
+  if (workspaceId === "strategy") {
+    return (
+      <div className="grid gap-3 xl:grid-cols-2">
+        <BoardCard title="Market Signals" icon={Search}>
+          {runtime.marketSignals.map((signal) => (
+            <div key={signal.label} className="rounded-2xl border border-white/10 bg-black/25 p-3">
+              <div className="flex items-center justify-between gap-2">
+                <span className="font-medium">{signal.label}</span>
+                <span
+                  className={clsx(
+                    "rounded-full px-2 py-1 text-[10px] uppercase tracking-[0.16em]",
+                    signal.sentiment === "positive"
+                      ? "bg-emerald-300/10 text-emerald-100"
+                      : signal.sentiment === "negative"
+                        ? "bg-red-300/10 text-red-100"
+                        : "bg-amber-300/10 text-amber-100",
+                  )}
+                >
+                  {signal.source}
+                </span>
+              </div>
+              <p className="mt-2 text-xs leading-5 text-slate-400">{signal.value}</p>
+            </div>
+          ))}
+        </BoardCard>
+        <BoardCard title="Competitor Pressure" icon={Radar}>
+          {runtime.competitors.map((competitor) => (
+            <div key={competitor.name} className="rounded-2xl border border-white/10 bg-black/25 p-3">
+              <div className="flex items-center justify-between">
+                <span className="font-medium">{competitor.name}</span>
+                <span className="text-xs uppercase text-fuchsia-200">{competitor.threat}</span>
+              </div>
+              <div className="mt-1 text-xs text-slate-500">{competitor.category}</div>
+              <p className="mt-2 text-xs leading-5 text-slate-400">{competitor.positioningGap}</p>
+            </div>
+          ))}
+        </BoardCard>
+      </div>
+    );
+  }
+
+  if (workspaceId === "prd") {
+    return (
+      <div className="grid gap-3 xl:grid-cols-2">
+        <BoardCard title="Persona Objections" icon={BrainCircuit}>
+          {runtime.personas.map((persona) => (
+            <div key={persona.persona} className="rounded-2xl border border-white/10 bg-black/25 p-3">
+              <div className="flex items-center justify-between">
+                <span className="font-medium">{persona.persona}</span>
+                <span className="text-xs text-cyan-200">{persona.confidence}%</span>
+              </div>
+              <p className="mt-2 text-xs italic leading-5 text-slate-300">"{persona.quote}"</p>
+              <p className="mt-2 text-xs leading-5 text-slate-500">Objection: {persona.objection}</p>
+            </div>
+          ))}
+        </BoardCard>
+        <BoardCard title="Execution Tasks" icon={Boxes}>
+          {runtime.tasks.map((task) => (
+            <div key={task.title} className="flex items-center justify-between rounded-2xl border border-white/10 bg-black/25 p-3">
+              <div>
+                <div className="text-sm font-medium">{task.title}</div>
+                <div className="text-xs text-slate-500">{task.owner}</div>
+              </div>
+              <span className={clsx("status-pill", statusTone[task.status === "done" ? "completed" : task.status])}>{task.status}</span>
+            </div>
+          ))}
+        </BoardCard>
+      </div>
+    );
+  }
+
+  if (workspaceId === "synthesis" || workspaceId === "deployment" || workspaceId === "launch") {
+    return (
+      <BoardCard title="Risk Register" icon={ShieldCheck}>
+        <div className="grid gap-3 md:grid-cols-2">
+          {runtime.risks.map((risk) => (
+            <div key={risk.risk} className="rounded-2xl border border-white/10 bg-black/25 p-3">
+              <div className="mb-2 flex items-center justify-between gap-2">
+                <span className="text-sm font-medium">{risk.risk}</span>
+                <span className="text-xs uppercase text-amber-200">{risk.severity}</span>
+              </div>
+              <p className="text-xs leading-5 text-slate-500">{risk.mitigation}</p>
+            </div>
+          ))}
+        </div>
+      </BoardCard>
+    );
+  }
+
+  return null;
+}
+
+function BoardCard({
+  title,
+  icon: Icon,
+  children,
+}: {
+  title: string;
+  icon: typeof Search;
+  children: ReactNode;
+}) {
+  return (
+    <div className="rounded-3xl border border-white/10 bg-white/[0.035] p-5">
+      <div className="mb-4 flex items-center gap-2">
+        <Icon className="text-cyan-200" size={17} />
+        <h3 className="font-semibold">{title}</h3>
+      </div>
+      <div className="space-y-3">{children}</div>
     </div>
   );
 }
@@ -717,11 +941,13 @@ function ContextPanel({
   memory,
   artifacts,
   project,
+  runtime,
   downloadPackage,
 }: {
   memory: MemoryEntry[];
   artifacts: Artifact[];
   project: PersistedAppState["project"];
+  runtime: PersistedAppState;
   downloadPackage: () => void;
 }) {
   return (
@@ -732,6 +958,20 @@ function ContextPanel({
         <p className="mt-2 text-sm leading-6 text-slate-400">{project.refinedSummary}</p>
       </div>
       <div className="flex-1 space-y-4 overflow-y-auto p-5">
+        <div className="rounded-2xl border border-cyan-300/20 bg-cyan-300/[0.045] p-4">
+          <div className="mb-3 flex items-center gap-2 font-semibold">
+            <Gauge className="text-cyan-200" size={16} />
+            Operating Console
+          </div>
+          <div className="grid gap-2 text-xs">
+            <ConsoleRow label="Mode" value={project.operatingMode} />
+            <ConsoleRow label="Integration" value={project.integrationMode} />
+            <ConsoleRow label="Active node" value={project.activeWorkspace} />
+            <ConsoleRow label="Graph step" value={`${project.currentStep + 1}/6`} />
+            <ConsoleRow label="Artifacts" value={String(artifacts.length)} />
+            <ConsoleRow label="Open risks" value={String(runtime.risks.length)} />
+          </div>
+        </div>
         <div className="rounded-2xl border border-white/10 bg-white/[0.035] p-4">
           <div className="mb-3 flex items-center gap-2 font-semibold">
             <Layers3 className="text-cyan-200" size={16} />
@@ -780,6 +1020,15 @@ function ContextPanel({
   );
 }
 
+function ConsoleRow({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="flex items-center justify-between rounded-xl border border-white/10 bg-black/25 px-3 py-2">
+      <span className="mono uppercase tracking-[0.18em] text-slate-500">{label}</span>
+      <span className="font-medium text-cyan-100">{value}</span>
+    </div>
+  );
+}
+
 function buildStaticPackage(runtime: PersistedAppState) {
   const artifacts = runtime.artifacts
     .map(
@@ -792,6 +1041,15 @@ function buildStaticPackage(runtime: PersistedAppState) {
         </section>
       `,
     )
+    .join("");
+  const signals = runtime.marketSignals
+    .map((signal) => `<li><strong>${signal.label}</strong>: ${signal.value} (${signal.source})</li>`)
+    .join("");
+  const competitors = runtime.competitors
+    .map((competitor) => `<li><strong>${competitor.name}</strong> (${competitor.threat}): ${competitor.positioningGap}</li>`)
+    .join("");
+  const risks = runtime.risks
+    .map((risk) => `<li><strong>${risk.severity}</strong>: ${risk.risk}. Mitigation: ${risk.mitigation}</li>`)
     .join("");
 
   return `<!doctype html>
@@ -818,6 +1076,18 @@ function buildStaticPackage(runtime: PersistedAppState) {
       <section>
         <h2>Final Recommendation</h2>
         <p>${runtime.project.recommendation.toUpperCase()} with ${runtime.project.validationConfidence}% validation confidence and ${runtime.project.readinessScore}% deployment readiness.</p>
+      </section>
+      <section>
+        <h2>Market Signals</h2>
+        <ul>${signals}</ul>
+      </section>
+      <section>
+        <h2>Competitor Pressure</h2>
+        <ul>${competitors}</ul>
+      </section>
+      <section>
+        <h2>Risk Register</h2>
+        <ul>${risks}</ul>
       </section>
       ${artifacts}
       <section>

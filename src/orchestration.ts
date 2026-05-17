@@ -1,12 +1,18 @@
 import { Annotation, END, START, StateGraph } from "@langchain/langgraph/web";
 import { initialAgents, initialNodes } from "./data";
+import { createFallbackResearch, runExternalResearch } from "./integrations";
 import type {
   AgentState,
   Artifact,
+  Competitor,
   ExecutionLog,
+  MarketSignal,
   MemoryEntry,
   OrchestrationPackage,
+  PersonaReaction,
   ProjectState,
+  RiskItem,
+  TaskItem,
   WorkspaceId,
   WorkflowNode,
 } from "./types";
@@ -54,6 +60,26 @@ const GraphAnnotation = Annotation.Root({
   }),
   memory: Annotation<MemoryEntry[]>({
     reducer: (left, right) => [...left, ...right],
+    default: () => [],
+  }),
+  marketSignals: Annotation<MarketSignal[]>({
+    reducer: stateReducer,
+    default: () => [],
+  }),
+  competitors: Annotation<Competitor[]>({
+    reducer: stateReducer,
+    default: () => [],
+  }),
+  personas: Annotation<PersonaReaction[]>({
+    reducer: stateReducer,
+    default: () => [],
+  }),
+  risks: Annotation<RiskItem[]>({
+    reducer: stateReducer,
+    default: () => [],
+  }),
+  tasks: Annotation<TaskItem[]>({
+    reducer: stateReducer,
     default: () => [],
   }),
 });
@@ -144,10 +170,6 @@ const makeMemory = (
   createdAt: now(),
 });
 
-const hasBrowserVisibleApiConfig = () =>
-  Boolean(import.meta.env.VITE_OPENAIKEY || import.meta.env.VITE_OPENAI_API_KEY) &&
-  Boolean(import.meta.env.VITE_EXAKEY || import.meta.env.VITE_EXA_API_KEY);
-
 const intakeNode = async (state: GraphState) => {
   const category = inferCategory(state.rawIdea);
   const refinedSummary = `${titleCase(state.rawIdea) || "Startup Concept"} is framed as a ${category} MVP for a high-friction workflow with measurable validation risk.`;
@@ -163,6 +185,13 @@ const intakeNode = async (state: GraphState) => {
 
   return {
     refinedSummary,
+    tasks: [
+      { title: "Frame user and pain hypothesis", owner: "Refinement Agent", status: "done" },
+      { title: "Collect market and competitor signals", owner: "Market Research Agent", status: "running" },
+      { title: "Simulate persona objections", owner: "Persona Validation Agent", status: "queued" },
+      { title: "Draft MVP PRD", owner: "PRD Agent", status: "queued" },
+      { title: "Produce final recommendation", owner: "QA Critic Agent", status: "queued" },
+    ],
     artifacts: [artifact],
     memory: [
       makeMemory(
@@ -186,10 +215,10 @@ const intakeNode = async (state: GraphState) => {
 };
 
 const strategyNode = async (state: GraphState) => {
-  const realReady = hasBrowserVisibleApiConfig();
-  const integrationMode = realReady ? "real-ready" : "fallback";
   const category = inferCategory(state.rawIdea);
-  const confidence = realReady ? 78 : 68;
+  const research = await runExternalResearch(state.rawIdea, category);
+  const integrationMode = research.mode;
+  const confidence = research.confidence;
   const marketArtifact = makeArtifact({
     type: "market-insight",
     title: integrationMode === "real-ready" ? "Market Signal Scan" : "Fallback Market Signal Scan",
@@ -200,7 +229,7 @@ const strategyNode = async (state: GraphState) => {
       integrationMode === "real-ready"
         ? "OpenAI/Exa integration path is configured for live validation."
         : "Browser-safe API keys are unavailable, so deterministic OpenAI-style fallback synthesis is used.",
-    content: `${category} buyers usually adopt new tools when they see immediate evidence of time saved, risk reduced, or revenue protected. Validation should focus on urgency, current workaround cost, and willingness to run a pilot.`,
+    content: research.summary,
   });
   const competitorArtifact = makeArtifact({
     type: "competitor-analysis",
@@ -209,8 +238,9 @@ const strategyNode = async (state: GraphState) => {
     sourceNodeId: "strategy",
     confidence: 70,
     summary: "Market has indirect alternatives; differentiation must be workflow depth and decision quality.",
-    content:
-      "Direct competitors may include vertical copilots, workflow automation suites, and consulting-heavy services. Adjacent competitors are spreadsheets, generic chat tools, and internal scripts. Positioning gap: evidence-backed validation packaged into an operator workspace.",
+    content: research.competitors
+      .map((competitor) => `${competitor.name} (${competitor.threat} threat): ${competitor.positioningGap}`)
+      .join("\n"),
     dependencies: [marketArtifact.id],
   });
   const personaArtifact = makeArtifact({
@@ -220,14 +250,26 @@ const strategyNode = async (state: GraphState) => {
     sourceNodeId: "strategy",
     confidence: 74,
     summary: "Primary persona is skeptical but interested if setup is fast and outputs are evidence-backed.",
-    content:
-      "Founder persona wants faster clarity before committing engineering time. Technical persona wants traceable assumptions. Advisor persona wants a concise build/refine/reject decision with market evidence and risk flags.",
+    content: research.personas
+      .map((persona) => `${persona.persona}: "${persona.quote}" Objection: ${persona.objection}`)
+      .join("\n"),
     dependencies: [marketArtifact.id],
   });
 
   return {
     integrationMode,
     validationConfidence: confidence,
+    marketSignals: research.signals,
+    competitors: research.competitors,
+    personas: research.personas,
+    risks: research.risks,
+    tasks: state.tasks.map((task) =>
+      task.owner === "Market Research Agent" || task.owner === "Persona Validation Agent"
+        ? { ...task, status: "done" }
+        : task.owner === "PRD Agent"
+          ? { ...task, status: "running" }
+          : task,
+    ),
     artifacts: [marketArtifact, competitorArtifact, personaArtifact],
     memory: [
       makeMemory(
@@ -241,9 +283,7 @@ const strategyNode = async (state: GraphState) => {
     ],
     logs: [
       makeLog(
-        integrationMode === "real-ready"
-          ? "Strategy node detected browser-safe OpenAI and Exa configuration."
-          : "Strategy node routed to OpenAI-style fallback because Exa/OpenAI browser-safe keys were unavailable.",
+        research.logMessage,
         integrationMode === "real-ready" ? "validation" : "warning",
         "strategy",
         "market-research",
@@ -279,6 +319,13 @@ const prdNode = async (state: GraphState) => {
 
   return {
     validationConfidence: Math.max(state.validationConfidence, 74),
+    tasks: state.tasks.map((task) =>
+      task.owner === "PRD Agent"
+        ? { ...task, status: "done" }
+        : task.owner === "QA Critic Agent"
+          ? { ...task, status: "running" }
+          : task,
+    ),
     artifacts: [prdArtifact, uxArtifact],
     memory: [
       makeMemory(
@@ -327,6 +374,21 @@ const synthesisNode = async (state: GraphState) => {
   return {
     recommendation,
     validationConfidence: Math.max(state.validationConfidence, 72),
+    risks: [
+      ...state.risks,
+      {
+        risk: "Weak buyer urgency can reduce willingness to pay.",
+        severity: "high",
+        mitigation: "Validate a paid pilot promise before expanding product surface area.",
+      },
+    ],
+    tasks: state.tasks.map((task) =>
+      task.owner === "QA Critic Agent"
+        ? { ...task, status: "done" }
+        : task.owner === "MVP Planning Agent"
+          ? { ...task, status: "running" }
+          : task,
+    ),
     artifacts: [critiqueArtifact, synthesisArtifact],
     memory: [
       makeMemory(
@@ -359,6 +421,12 @@ const deploymentNode = async (state: GraphState) => {
 
   return {
     readinessScore,
+    tasks: [
+      ...state.tasks.map((task) =>
+        task.owner === "MVP Planning Agent" ? { ...task, status: "done" as const } : task,
+      ),
+      { title: "Package local launch file", owner: "Launch Agent", status: "running" },
+    ],
     artifacts: [deploymentArtifact],
     memory: [
       makeMemory(
@@ -388,6 +456,9 @@ const launchNode = async (state: GraphState) => {
   });
 
   return {
+    tasks: state.tasks.map((task) =>
+      task.owner === "Launch Agent" ? { ...task, status: "done" } : task,
+    ),
     artifacts: [launchArtifact],
     memory: [
       makeMemory(
@@ -431,10 +502,11 @@ const createProject = (rawIdea: string, graphState: GraphState): ProjectState =>
   currentStep: 0,
   readinessScore: graphState.readinessScore,
   validationConfidence: graphState.validationConfidence,
-  recommendation: graphState.recommendation,
-  integrationMode: graphState.integrationMode,
-  generatedAt: now(),
-  updatedAt: now(),
+    recommendation: graphState.recommendation,
+    integrationMode: graphState.integrationMode,
+    operatingMode: "autonomous",
+    generatedAt: now(),
+    updatedAt: now(),
 });
 
 const materializeAgents = (step: number, artifacts: Artifact[]): AgentState[] =>
@@ -480,6 +552,11 @@ export const runConductorGraph = async (rawIdea: string): Promise<OrchestrationP
     artifacts: [],
     logs: [],
     memory: [],
+    marketSignals: [],
+    competitors: [],
+    personas: [],
+    risks: [],
+    tasks: [],
   });
 
   return {
@@ -489,6 +566,11 @@ export const runConductorGraph = async (rawIdea: string): Promise<OrchestrationP
     artifacts: result.artifacts,
     logs: result.logs,
     memory: result.memory,
+    marketSignals: result.marketSignals,
+    competitors: result.competitors,
+    personas: result.personas,
+    risks: result.risks,
+    tasks: result.tasks,
   };
 };
 
@@ -509,6 +591,7 @@ export const revealPackageStep = (
   const completedWorkspaces = workspaceOrder.slice(0, clampedStep);
   const activeWorkspace = workspaceOrder[clampedStep] ?? "launch";
   const completed = clampedStep === workspaceOrder.length - 1;
+  const fallback = createFallbackResearch(orchestration.project.rawIdea, inferCategory(orchestration.project.rawIdea));
 
   return {
     ...orchestration,
@@ -518,6 +601,7 @@ export const revealPackageStep = (
       completedWorkspaces,
       currentStep: clampedStep,
       status: completed ? "completed" : "running",
+      operatingMode: completed ? "completed" : orchestration.project.operatingMode,
       validationConfidence: Math.min(
         orchestration.project.validationConfidence,
         26 + clampedStep * 12,
@@ -539,6 +623,19 @@ export const revealPackageStep = (
       ),
     ],
     memory,
+    marketSignals: clampedStep >= 1 ? orchestration.marketSignals : [],
+    competitors: clampedStep >= 1 ? orchestration.competitors : [],
+    personas: clampedStep >= 1 ? orchestration.personas : [],
+    risks:
+      clampedStep >= 3
+        ? orchestration.risks
+        : clampedStep >= 1
+          ? orchestration.risks.slice(0, Math.max(1, fallback.risks.length - 1))
+          : [],
+    tasks: orchestration.tasks.map((task, index) => ({
+      ...task,
+      status: index <= clampedStep ? "done" : index === clampedStep + 1 ? "running" : "queued",
+    })),
   };
 };
 
@@ -556,6 +653,7 @@ export const createEmptyPackage = (): OrchestrationPackage => ({
     validationConfidence: 0,
     recommendation: "pending",
     integrationMode: "fallback",
+    operatingMode: "paused",
     generatedAt: now(),
     updatedAt: now(),
   },
@@ -564,4 +662,9 @@ export const createEmptyPackage = (): OrchestrationPackage => ({
   artifacts: [],
   logs: [makeLog("ConductorIQ local runtime waiting for idea intake.", "system", "intake", "supervisor")],
   memory: [],
+  marketSignals: [],
+  competitors: [],
+  personas: [],
+  risks: [],
+  tasks: [],
 });

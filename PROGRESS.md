@@ -18,10 +18,16 @@ Last updated: 2026-05-17
 - Verified `npm run build` succeeds.
 - Added ESLint configuration and verified `npm run lint` succeeds.
 - Browser verified the workflow reaches Launch, displays the MVP Foundation Package, marks Launch completed, and persists state across reload.
+- Expanded product-grade workflow controls: pause, resume, manual step, and speed selection.
+- Added optional browser-safe OpenAI/Exa integration hooks with timeout-based fallback.
+- Added structured market signals, competitor pressure, persona objections, risk register, task execution state, and operating console.
+- Expanded static MVP export to include signals, competitors, risks, and artifact evidence.
+- Added `.env.example` documenting optional `VITE_` API key names for local demos without committing secrets.
 
 ## In Progress
 
 - Final review and repository status check.
+- Commit and push expanded product update.
 
 ## Remaining
 
@@ -32,6 +38,7 @@ Last updated: 2026-05-17
 - OpenAI and Exa calls will fall back to local deterministic outputs if browser-safe API configuration is unavailable or any external request fails.
 - Advanced animation polish is lower priority than end-to-end workflow completion.
 - Vite reports a large bundle warning because LangGraph is included in the client bundle; this is acceptable for the local MVP but should be optimized later.
+- Real OpenAI/Exa calls require browser-exposed `VITE_OPENAI_API_KEY` and `VITE_EXA_API_KEY`; the current private `.env.local` keys are intentionally not exposed to the browser.
 
 ## Verification
 
@@ -41,7 +48,10 @@ Last updated: 2026-05-17
 - Browser verification: passed at `http://127.0.0.1:5173/`.
 - End-to-end workflow: passed from Intake to Launch.
 - Reload persistence: passed.
+- Expanded browser verification: passed workflow controls, Strategy structured board, Launch package, risk register, operating console, and completed Launch node.
+- `npm run build`: passed after product expansion.
+- `npm run lint`: passed after product expansion.
 
 ## Next Task
 
-- Finalize response with verification summary and local run instructions.
+- Commit and push the expanded product update, then report verification summary.

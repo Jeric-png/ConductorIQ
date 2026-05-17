@@ -134,8 +134,8 @@ The implementation should follow this timeboxed sequence. If time runs short, pr
 | 0:15-0:40 | Cinematic shell | Top bar, six-workspace left nav, main panel, right context panel, and log panel render |
 | 0:40-1:05 | Local orchestration state and API proxy | Idea intake initializes workflow state, agents, scores, logs, localStorage persistence, and real validation request handlers |
 | 1:05-1:40 | Strategy validation workspace | OpenAI + Exa market signals, competitors, personas, risks, validation confidence, and agent activity display |
-| 1:40-2:05 | PRD Generation and Synthesis | PRD summary, feature priorities, critique loop, and pursue/refine/reject recommendation display |
-| 2:05-2:20 | Deployment and Launch | MVP scope, readiness score, local static MVP package, launch next actions, and final package summary display |
+| 1:40-2:05 | PRD Generation and Synthesis | Comprehensive PRD artifact, PRD review, synthesis plan, interface improvements, critique loop, and pursue/refine/reject recommendation display |
+| 2:05-2:20 | Deployment and Launch | Prototype approval state, MVP scope, readiness score, implementation plan, local static MVP package, launch next actions, and final package summary display |
 | 2:20-2:30 | Verification and polish | Build succeeds, reload persists state, demo flow works end-to-end |
 
 ### 5.5 Non-Goals
@@ -176,15 +176,21 @@ The implementation should follow this timeboxed sequence. If time runs short, pr
 1. The user enters a rough startup or software idea, for example: "Build an AI-native cybersecurity SOC assistant."
 2. Alternatively, the user may select a local `.txt` or `.md` idea brief file to prefill Intake.
 3. ConductorIQ initializes a project and stores the raw idea in project memory.
-4. A local LangGraph `StateGraph` decomposes the idea into the six required workspaces.
-5. Specialized agents execute idea refinement, market research, competitor analysis, persona validation, risk analysis, PRD generation, synthesis, deployment-readiness, and launch recommendation tasks using OpenAI and Exa where possible.
-6. Generated artifacts appear progressively in the active workspace and right-side context panel.
-7. Validation agents critique market evidence, persona fit, competitor pressure, MVP scope, and launch risk.
-8. The local LangGraph orchestration runtime routes execution based on task completion, dependencies, validation results, critique outcomes, and workflow state.
-9. OpenAI and Exa activity appears in logs, cards, artifacts, and recommendation evidence; if Exa fails, OpenAI generates a clearly labelled fallback market-research synthesis.
-10. The system revisits weak assumptions and improves the recommendation autonomously.
-11. The final output becomes an evidence-backed MVP Foundation Package with a pursue, refine, or reject recommendation.
-12. The user can download a local static MVP package containing a simple `index.html`, generated product copy, launch summary, and optional GPT Image 2 visual asset references.
+4. A Prompt Architect Agent crafts a stronger execution prompt from the rough idea.
+5. A Prompt Validator Agent reviews the crafted prompt for clarity, specificity, missing context, target user, market assumptions, output format, and implementation feasibility.
+6. The prompt is improved automatically until it is specific enough to drive market validation, PRD generation, visual prototyping, and MVP planning.
+7. A local LangGraph `StateGraph` decomposes the improved prompt into the six required workspaces.
+8. Strategy agents execute market lead discovery, competitor analysis, persona validation, assumption testing, risk analysis, and validation scoring using OpenAI and Exa where possible.
+9. PRD Generation produces a comprehensive startup-quality `PRD.md` artifact, using this ConductorIQ PRD as the structural reference standard for depth, hierarchy, implementation orientation, risks, acceptance criteria, data models, workflow behavior, and UI requirements.
+10. PRD Reviewer and QA Critic agents review the generated `PRD.md`, identify gaps, improve weak sections, and produce an explicit PRD quality score before the workflow continues.
+11. Synthesis does not immediately rush into build execution. It first reviews all upstream evidence, generated PRD sections, market leads, persona objections, risks, interface requirements, and prototype direction.
+12. Synthesis then produces a comprehensive Synthesis Plan that explains whether to pursue, refine, or reject; what must change; what prototype should be generated; what interface improvements are required; and what validation evidence is still weak.
+13. The workflow intentionally pauses at the Synthesis checkpoint until the user reviews the Synthesis Plan and decides whether to re-run the workflow, revise the prompt, approve prototype generation, or continue.
+14. If the user approves prototype generation, GPT Image 2 generates visual concept images, hero concepts, interface references, and prototype direction cards.
+15. Prototype Review presents generated images and interface concepts for explicit user approval. ConductorIQ must wait for approval before moving into build planning.
+16. If the user approves the prototype, Launch coordinates a group of build-preparation agents to create a complete MVP build package, including implementation plan, frontend structure, component map, user workflow, data model, styling direction, and launch checklist.
+17. If the user does not approve the prototype, ConductorIQ loops back to prompt improvement, PRD revision, or prototype regeneration rather than starting implementation.
+18. The final output becomes an approval-backed MVP Foundation Package containing the improved prompt, comprehensive PRD, validation evidence, synthesis plan, approved prototype direction, implementation plan, and launch next actions.
 
 ## 8. Required Workspaces and Workflow Stages
 
@@ -192,12 +198,12 @@ ConductorIQ must center the MVP around six core workspaces. Detailed agent activ
 
 | Workspace | Purpose | Required MVP Outputs |
 | --- | --- | --- |
-| Intake | Capture the rough concept and initialize validation state. | Raw idea, inferred category, validation depth, initial agent queue |
-| Strategy | Evaluate market, competitors, personas, assumptions, and risks. | Market confidence, competitor cards, persona reactions, risk register |
-| PRD Generation | Convert validated assumptions into a compact product requirement draft. | Problem statement, target user, MVP features, acceptance criteria |
-| Synthesis | Combine evidence into a clear build decision. | Pursue/refine/reject recommendation, evidence summary, weakest assumptions |
-| Deployment | Simulate MVP readiness and implementation implications. | MVP scope, stack suggestion, effort estimate, readiness score |
-| Launch | Present the final MVP foundation package and local static MVP output. | Launch narrative, validation summary, next actions, final confidence score, downloadable static MVP package |
+| Intake | Capture the rough concept, craft a stronger prompt, validate the prompt, and initialize validation state. | Raw idea, crafted prompt, prompt critique, improved prompt, inferred category, validation depth, initial agent queue |
+| Strategy | Evaluate market leads, competitors, personas, assumptions, and risks. | Market confidence, market lead list, competitor cards, persona reactions, risk register, validation evidence |
+| PRD Generation | Generate a comprehensive startup-quality PRD and review it before downstream use. | Full PRD.md draft, feature requirements, acceptance criteria, UX requirements, technical direction, PRD review notes, PRD quality score |
+| Synthesis | Review all upstream outputs and produce a comprehensive hold-point synthesis plan before rerunning or continuing. | Pursue/refine/reject recommendation, synthesis plan, weak evidence, interface improvements, validation gaps, rerun recommendations |
+| Deployment | Prepare the approved prototype and MVP execution package without starting build prematurely. | Prototype brief, GPT Image 2 generation status, approved prototype state, MVP scope, stack suggestion, effort estimate, readiness score |
+| Launch | Coordinate build-preparation agents after user approval and package the final MVP foundation. | Approved prototype summary, implementation plan, component map, launch narrative, validation summary, next actions, downloadable package |
 
 Detailed activities such as idea refinement, market validation, competitor analysis, persona simulation, UX ideation, architecture planning, QA critique, and launch preparation should be represented as agent tasks inside the six workspaces rather than separate navigable pages.
 
@@ -211,19 +217,26 @@ The platform must include visible specialized agents. Each agent should have a n
 | --- | --- | --- |
 | Workflow Supervisor Agent | Coordinates stage order, dependency resolution, retries, and approval checkpoints. | Workflow plan, execution state, routing decisions |
 | Memory Agent | Maintains project memory, context summaries, artifact lineage, and dependency references. | Memory entries, context blocks, dependency map |
+| Prompt Architect Agent | Converts the rough idea into a structured, high-context execution prompt. | Crafted prompt, prompt sections, target output contract |
+| Prompt Validator Agent | Reviews and improves the crafted prompt for clarity, constraints, feasibility, and completeness. | Prompt critique, improved prompt, validation score |
 | Refinement Agent | Turns raw ideas into clear problem, user, market, and MVP framing. | Refined brief, assumptions, concept summary |
-| Market Research Agent | Simulates market signals and future research API behavior to validate demand. | Market insights, trend notes, confidence score |
+| Market Research Agent | Finds market signals, market leads, demand patterns, and external validation evidence. | Market insights, lead list, trend notes, confidence score |
 | Competitor Analysis Agent | Identifies alternatives and positioning opportunities. | Competitor grid, differentiation notes |
 | Persona Validation Agent | Simulates user and stakeholder perspectives. | Personas, objections, validation notes |
-| PRD Agent | Generates and revises product requirements. | PRD sections, feature requirements, acceptance criteria |
+| PRD Agent | Generates a comprehensive PRD using ConductorIQ's own PRD as the depth and structure benchmark. | Full PRD.md, feature requirements, acceptance criteria |
+| PRD Reviewer Agent | Reviews the generated PRD for missing scope, weak requirements, poor implementation detail, and unclear acceptance criteria. | PRD review, revision requests, PRD quality score |
 | UX/UI Agent | Converts product requirements into user flows and UI concepts. | User flows, screen map, interaction requirements |
+| Interface Improvement Agent | Reviews generated interface direction and proposes improvements to navigation, hierarchy, copy, validation visibility, and approval states. | Interface critique, improvement backlog, UX validation notes |
+| GPT Image Agent | Generates visual concepts, hero images, interface references, and prototype imagery using GPT Image 2. | Generated images, visual prompts, prototype image set |
+| Prototype Review Agent | Holds generated images and prototype concepts for explicit user approval before build planning starts. | Approval request, prototype review notes, approval state |
 | Stitch Design Agent | Simulates Stitch MCP visual concepts and design iterations. | UI mockups, design references, visual iteration notes |
 | Architecture Agent | Defines MVP technical architecture and implementation constraints. | Stack decisions, architecture diagram notes, schemas |
 | MVP Planning Agent | Produces build plan, backlog, and implementation sequencing. | MVP backlog, milestone plan, scaffold notes |
 | QA Critic Agent | Reviews outputs for ambiguity, feasibility, risk, and missing requirements. | Critique events, revision requests, risk flags |
-| Launch Agent | Packages launch assets and readiness summaries. | Demo script, launch checklist, readiness score |
+| Build Orchestrator Agent | Activates only after prototype approval and coordinates implementation preparation agents. | Build readiness plan, component map, execution sequence |
+| Launch Agent | Packages launch assets, implementation plan, approved prototype direction, and readiness summaries. | Demo script, launch checklist, readiness score, MVP package |
 
-To stay within 3 hours, the UI may show all agents as compact cards while actively simulating only the highest-impact validation agents: Workflow Supervisor, Market Research, Competitor Analysis, Persona Validation, PRD, QA Critic, Memory, and Launch.
+To stay within the MVP window, the UI may show all agents as compact cards while actively executing the highest-impact agents: Workflow Supervisor, Prompt Architect, Prompt Validator, Market Research, Competitor Analysis, Persona Validation, PRD, PRD Reviewer, QA Critic, GPT Image, Prototype Review, Memory, and Launch.
 
 ### 9.2 Agent States
 
@@ -278,6 +291,11 @@ The LangGraph orchestration layer should coordinate:
 - Continuous execution cycles.
 - Multi-agent communication.
 - Conditional execution branching.
+- Prompt validation loops.
+- PRD review and revision loops.
+- Synthesis hold states.
+- Prototype approval gates.
+- Build-preparation activation only after approval.
 
 ### 10.2 Workflow Graph Model
 
@@ -331,6 +349,10 @@ To keep the 2 hour 30 minute build feasible, the MVP LangGraph implementation sh
 - Keep graph state serializable so snapshots can be persisted to localStorage.
 - Route Exa failure or insufficient evidence to an OpenAI fallback branch.
 - Route weak validation confidence to a critique or revision pass before final synthesis.
+- Route weak prompt quality back to Prompt Architect before market validation.
+- Route weak PRD quality back to PRD Agent before Synthesis.
+- Pause after Synthesis until the user approves rerun, revision, prototype generation, or continuation.
+- Pause after GPT Image 2 prototype generation until the user approves the prototype direction.
 - Keep browser UI state, artifacts, logs, scores, and selected workspace in localStorage.
 - Do not use LangGraph Cloud, hosted workers, external queues, or a database checkpointer.
 - If time is tight, prioritize one successful end-to-end graph path over sophisticated branching.
@@ -355,12 +377,21 @@ Reference: [Using Goals in Codex](https://developers.openai.com/cookbook/example
 
 ConductorIQ should generate and display artifacts such as:
 
+- Crafted prompts.
+- Prompt critiques.
+- Improved prompts.
+- Market leads.
 - Market insights.
 - Competitor analysis.
 - Persona definitions.
-- PRD drafts.
+- Comprehensive PRD drafts.
+- PRD review reports.
+- Synthesis plans.
+- Interface improvement reports.
 - UX flows.
 - UI mockups.
+- GPT Image 2 visual concepts.
+- Prototype approval records.
 - Stitch design assets.
 - Architecture notes.
 - Data model assumptions.
@@ -386,6 +417,9 @@ Each artifact should include:
 - Last updated timestamp.
 - Summary.
 - Content payload.
+- Review status when applicable.
+- Approval status when applicable.
+- Evidence source label: Exa, OpenAI, GPT Image 2, fallback, user input, or local simulation.
 
 ### 11.3 Artifact States
 
@@ -397,6 +431,9 @@ Artifacts should support visible states:
 - Under review.
 - Revision requested.
 - Approved.
+- Awaiting user approval.
+- User rejected.
+- Regenerating.
 - Superseded.
 - Failed.
 
@@ -458,12 +495,12 @@ The MVP should include:
 
 | View | Purpose | Key Elements |
 | --- | --- | --- |
-| Intake | Start a workflow from a rough idea. | Large text input, initialize button, readiness pre-compute cards, system console |
-| Strategy | Show market validation, competitor pressure, personas, and risk signals. | Confidence score, market grid, competitor cards, persona feedback, risk flags |
-| PRD Generation | Show requirements being generated from validated evidence. | PRD sections, feature priorities, acceptance criteria, critique notes |
-| Synthesis | Show the evidence-backed build decision. | Pursue/refine/reject recommendation, evidence summary, weak assumptions |
-| Deployment | Show MVP readiness and implementation implications. | MVP scope, simulated stack insight, effort estimate, readiness score |
-| Launch | Show final MVP foundation package. | Final validation score, launch narrative, next actions, artifact summary |
+| Intake | Start a workflow from a rough idea and improve the execution prompt before validation. | Large text input, file import, crafted prompt panel, prompt validation score, improved prompt diff, initialize button, system console |
+| Strategy | Show market validation, market leads, competitor pressure, personas, and risk signals. | Confidence score, market lead table, source labels, market grid, competitor cards, persona feedback, risk flags |
+| PRD Generation | Show a comprehensive `PRD.md` being generated and reviewed from validated evidence. | PRD outline, section completeness, feature priorities, acceptance criteria, UX requirements, PRD review notes, PRD quality score |
+| Synthesis | Review first, then hold on a comprehensive synthesis plan before re-running or continuing. | Pursue/refine/reject recommendation, comprehensive synthesis plan, evidence summary, weak assumptions, interface improvements, validation gaps, rerun/continue controls |
+| Deployment | Show prototype generation and MVP readiness without starting build before approval. | GPT Image 2 status, generated prototype images, approval checkpoint, MVP scope, stack insight, effort estimate, readiness score |
+| Launch | After approval, show build-preparation agents and final MVP foundation package. | Approved prototype summary, implementation plan, component map, final validation score, launch narrative, next actions, artifact summary |
 
 ### 12.4 Required UX Signals
 
@@ -479,6 +516,25 @@ The interface should continuously signal autonomy:
 - Retry counters.
 - Readiness score changes.
 - "Autonomous Mode" indicator.
+- Prompt quality score and prompt improvement diff.
+- PRD completeness score and PRD reviewer findings.
+- Explicit approval checkpoint before prototype-to-build transition.
+- Prototype approval state: pending, approved, rejected, regenerating.
+- Interface improvement and validation notes surfaced as first-class cards.
+
+### 12.5 Interface Improvement and Validation Requirements
+
+ConductorIQ should not only generate product artifacts; it should also critique and improve the interface direction that would be used for the user's MVP.
+
+The interface improvement layer should provide:
+
+- A UI clarity score that evaluates whether the proposed MVP interface explains its primary user action within five seconds.
+- A workflow coherence score that evaluates whether the user's path through the MVP is obvious.
+- A trust and evidence score that evaluates whether validation claims are visibly supported by sources, assumptions, or rationale.
+- A visual hierarchy critique that identifies crowded sections, weak calls to action, missing empty states, and unclear approval states.
+- A copy improvement pass that rewrites vague interface labels into action-oriented product language.
+- A prototype readiness checklist that must pass before Launch can coordinate build-preparation agents.
+- A clear distinction between generated design suggestions, approved prototype direction, and implementation-ready scope.
 
 ## 13. Functional Requirements
 
@@ -490,6 +546,10 @@ The interface should continuously signal autonomy:
 - The system creates or resets a local project.
 - The system estimates complexity, scope, validation depth, and MVP time.
 - The system initializes workflow graph nodes and agent states.
+- The system must craft a structured prompt from the rough idea before starting downstream validation.
+- The system must validate and improve the crafted prompt before Strategy, PRD Generation, or image generation begins.
+- The improved prompt should include target user, problem hypothesis, market assumptions, validation questions, desired PRD depth, visual prototype requirements, build constraints, and output format.
+- The UI should show the original idea, crafted prompt, validation critique, and improved prompt as separate visible artifacts.
 
 ### 13.2 Workflow Activation
 
@@ -512,8 +572,24 @@ The interface should continuously signal autonomy:
 - Critique events can trigger revisions.
 - Weak or ambiguous outputs are flagged.
 - Validation confidence should update as research and critique events complete.
+- Prompt Validator Agent must critique the crafted prompt before validation starts.
+- PRD Reviewer Agent must critique the generated `PRD.md` before Synthesis starts.
+- Interface Improvement Agent must critique UI/UX direction before prototype approval.
+- Synthesis must review first and generate a comprehensive Synthesis Plan before any build-preparation work begins.
+- Synthesis must support a hold state where the user can approve, request revision, or re-run the workflow with improved prompt context.
 
-### 13.5 Artifact Generation
+### 13.5 Comprehensive PRD Generation
+
+- The PRD Agent must generate a comprehensive `PRD.md` artifact rather than a short summary.
+- The generated PRD should use this ConductorIQ PRD as a reference for structure, depth, hierarchy, implementation orientation, and acceptance criteria.
+- The generated PRD should include executive summary, vision, problem statement, goals, non-goals, users, workflow, feature requirements, UX requirements, technical direction, data models, acceptance criteria, risks, roadmap, and source assumptions.
+- The PRD should explain how market evidence, persona objections, and competitor analysis affect product scope.
+- The PRD should include implementation constraints and explicitly identify what should not be built.
+- The PRD should include measurable acceptance criteria and demo-readiness requirements.
+- The PRD Reviewer Agent must produce review findings, missing sections, ambiguity flags, and a PRD quality score.
+- If the PRD quality score is below the configured threshold, ConductorIQ should revise the PRD before Synthesis.
+
+### 13.6 Artifact Generation
 
 - The system displays generated artifacts progressively.
 - Artifacts should appear connected to agents and workflow nodes.
@@ -521,16 +597,36 @@ The interface should continuously signal autonomy:
 - The final workflow should produce an MVP Foundation Package.
 - The Launch workspace should provide a downloadable static MVP package.
 - The package should be generated locally as simple static files, not deployed to a hosted environment.
-- Minimum static package contents: `index.html`, product positioning copy, MVP feature summary, validation recommendation, launch next actions, and optional GPT Image 2-generated asset reference.
+- Minimum static package contents: improved prompt, comprehensive PRD, PRD review, market validation, synthesis plan, approved prototype direction, implementation plan, product positioning copy, MVP feature summary, validation recommendation, launch next actions, and optional GPT Image 2-generated asset reference.
 
-### 13.6 Persistent Local State
+### 13.7 GPT Image and Prototype Approval
+
+- GPT Image 2 should generate prototype visuals, hero concepts, interface mockup references, or concept assets when the workflow reaches the approved image-generation step.
+- The generated image prompt should be derived from the improved prompt, PRD, synthesis plan, and interface improvement notes.
+- Generated images should be shown as prototype options with status, rationale, and associated UX direction.
+- ConductorIQ must wait for explicit user approval before treating any generated prototype as approved.
+- If the user rejects the prototype, the workflow should offer regenerate, revise prompt, revise PRD, or return to Synthesis.
+- Build-preparation agents must not activate until a prototype or prototype direction has been approved.
+- If GPT Image 2 is unavailable, ConductorIQ may produce detailed visual prompt cards and clearly label the prototype as pending image generation.
+
+### 13.8 Market Leads and Validation
+
+- Strategy must look for market leads and validation signals, not only generic market summaries.
+- Market leads may include customer segments, buyer titles, communities, search queries, competitor users, pain indicators, and possible interview targets.
+- Each market lead should include rationale, likely pain, validation question, confidence, and evidence source.
+- Exa should be used for market and competitor discovery where available.
+- OpenAI should synthesize lead quality, persona fit, urgency, and validation gaps.
+- If Exa fails, OpenAI fallback should produce clearly labelled synthetic market lead hypotheses.
+- Synthesis must distinguish evidence-backed leads from hypothesis-only leads.
+
+### 13.9 Persistent Local State
 
 - Active project state persists in localStorage or IndexedDB.
 - Reloading the app restores idea, workflow state, artifacts, logs, validation scores, PRD content, and agent progress.
 - A reset or new workflow action clears the current demo state.
 - Downloaded static MVP package files are separate local exports and are not treated as the source of truth after download.
 
-### 13.7 Continuous Activity Simulation
+### 13.10 Continuous Activity Simulation
 
 - The MVP should continue updating visible states while validation is active.
 - Logs, nodes, agent statuses, and artifact cards should update based on real request lifecycle states and deterministic local workflow ticks.
@@ -538,7 +634,16 @@ The interface should continuously signal autonomy:
 - The workflow must run locally without a database.
 - Workflow state, generated artifacts, agent states, execution logs, validation scores, and PRD content must be persisted locally.
 
-### 13.8 Prohibited MVP Infrastructure
+### 13.11 Approval Checkpoints
+
+- The workflow must support explicit approval checkpoints for Synthesis Plan review and prototype approval.
+- Approval checkpoint states should include pending review, approved, rejected, revision requested, and regenerated.
+- The UI must make it clear when ConductorIQ is waiting for the user and when agents are actively running.
+- The system must not start MVP build-preparation agents after prototype generation until the user approves.
+- If the user approves, Launch should coordinate build-preparation agents to create the MVP package.
+- If the user rejects, the Workflow Supervisor Agent should route back to prompt improvement, PRD revision, image regeneration, or Synthesis depending on the rejection reason.
+
+### 13.12 Prohibited MVP Infrastructure
 
 - Do not implement authentication.
 - Do not implement billing.
@@ -695,11 +800,20 @@ interface Artifact {
   id: string;
   type:
     | "market-insight"
+    | "market-lead"
     | "competitor-analysis"
     | "persona"
+    | "crafted-prompt"
+    | "prompt-critique"
+    | "improved-prompt"
     | "prd"
+    | "prd-review"
+    | "synthesis-plan"
+    | "interface-improvement"
     | "ux-flow"
     | "ui-mockup"
+    | "gpt-image"
+    | "prototype-approval"
     | "architecture"
     | "data-assumption"
     | "mvp-plan"
@@ -713,6 +827,9 @@ interface Artifact {
     | "under-review"
     | "revision-requested"
     | "approved"
+    | "awaiting-user-approval"
+    | "user-rejected"
+    | "regenerating"
     | "superseded"
     | "failed";
   producingAgentId: string;
@@ -722,6 +839,9 @@ interface Artifact {
   confidence: number;
   summary: string;
   content: string;
+  evidenceSource?: "user-input" | "openai" | "exa" | "gpt-image-2" | "fallback" | "local-simulation";
+  reviewStatus?: "not-reviewed" | "under-review" | "reviewed" | "revision-required";
+  approvalStatus?: "not-required" | "pending" | "approved" | "rejected";
   updatedAt: string;
 }
 
@@ -749,6 +869,7 @@ interface MemoryEntry {
 The MVP is acceptable within the 2 hour 30 minute build window when:
 
 - A user can enter a rough idea and initialize a ConductorIQ project.
+- The system crafts, validates, and improves a structured prompt before downstream generation.
 - The MVP uses a real local LangGraph `StateGraph` to execute at least one end-to-end path across Intake, Strategy, PRD Generation, Synthesis, Deployment, and Launch.
 - The UI clearly looks like an autonomous market-validation workspace, not a chatbot.
 - The six required workspaces are visible: Intake, Strategy, PRD Generation, Synthesis, Deployment, and Launch.
@@ -757,10 +878,18 @@ The MVP is acceptable within the 2 hour 30 minute build window when:
 - The orchestration graph, timeline, or stage system shows dependencies and active routing.
 - Artifacts appear progressively and reference upstream context.
 - QA or validation loops visibly critique and revise at least one output.
+- PRD Generation produces a comprehensive PRD artifact, not only a compact PRD summary.
+- PRD Review visibly critiques the generated PRD and surfaces improvement recommendations.
+- Strategy surfaces market leads and validation signals in addition to market summaries.
+- Synthesis reviews upstream outputs first and produces a comprehensive Synthesis Plan before continuing.
+- The workflow supports a visible hold or approval checkpoint before prototype-to-build progression.
+- GPT Image 2 prototype generation is represented as generated images or clearly labelled visual prompt cards.
+- The product waits for user approval before treating a generated prototype as build-ready.
+- Interface improvement and validation notes are visible in the workflow.
 - Project memory is visible and updates during execution.
 - Execution logs stream continuously while autonomous mode is active.
 - The final state presents an evidence-backed recommendation: pursue, refine, or reject.
-- The final state presents an MVP Foundation Package with market evidence, competitor insights, persona feedback, PRD summary, MVP scope, risk notes, and launch next actions.
+- The final state presents an MVP Foundation Package with improved prompt, comprehensive PRD, PRD review, market evidence, market leads, competitor insights, persona feedback, synthesis plan, approved prototype direction, MVP scope, risk notes, implementation plan, and launch next actions.
 - The user can import an idea brief from a local `.txt` or `.md` file.
 - The user can download a static MVP package generated locally with no database connection.
 - Reloading the app preserves meaningful workflow state.

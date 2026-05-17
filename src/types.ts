@@ -26,18 +26,30 @@ export type ArtifactStatus =
   | "under-review"
   | "revision-requested"
   | "approved"
+  | "awaiting-user-approval"
+  | "user-rejected"
+  | "regenerating"
   | "superseded"
-  | "failed";
+  | "failed"
+  | "fallback";
 
 export type ArtifactType =
+  | "prompt"
+  | "prompt-review"
   | "market-insight"
   | "competitor-analysis"
   | "persona"
   | "prd"
+  | "prd-review"
   | "ux-flow"
   | "ui-mockup"
   | "architecture"
   | "data-assumption"
+  | "synthesis-plan"
+  | "interface-review"
+  | "prototype"
+  | "design-validation"
+  | "implementation-plan"
   | "mvp-plan"
   | "qa-critique"
   | "launch-plan";
@@ -45,16 +57,24 @@ export type ArtifactType =
 export type AgentRole =
   | "supervisor"
   | "memory"
+  | "prompt-architect"
+  | "prompt-validator"
   | "refinement"
   | "market-research"
   | "competitor-analysis"
   | "persona-validation"
   | "prd"
+  | "prd-reviewer"
   | "ux-ui"
+  | "interface-improvement"
+  | "gpt-image"
+  | "prototype-review"
+  | "designer"
   | "stitch-design"
   | "architecture"
   | "mvp-planning"
   | "qa-critic"
+  | "build-orchestrator"
   | "launch";
 
 export interface AgentState {
@@ -82,6 +102,9 @@ export interface Artifact {
   confidence: number;
   summary: string;
   content: string;
+  evidenceSource?: "user-input" | "openai" | "gpt-image-2" | "fallback" | "deterministic-local";
+  reviewStatus?: "not-reviewed" | "under-review" | "reviewed" | "revision-required";
+  approvalStatus?: "not-required" | "pending" | "approved" | "rejected";
   updatedAt: string;
 }
 
@@ -89,7 +112,7 @@ export interface MarketSignal {
   label: string;
   value: string;
   sentiment: "positive" | "neutral" | "negative";
-  source: "exa" | "openai" | "fallback";
+  source: "openai" | "fallback";
 }
 
 export interface Competitor {
@@ -97,6 +120,7 @@ export interface Competitor {
   category: string;
   threat: "low" | "medium" | "high";
   positioningGap: string;
+  differentiation?: string;
 }
 
 export interface PersonaReaction {
@@ -104,6 +128,73 @@ export interface PersonaReaction {
   quote: string;
   confidence: number;
   objection: string;
+  willingnessToPay?: string;
+}
+
+export interface MarketLead {
+  buyerType: string;
+  painSignal: string;
+  rationale: string;
+  validationQuestion: string;
+  confidence: number;
+  evidenceSource: "openai" | "fallback";
+  priority?: "primary" | "secondary" | "experimental";
+  segment?: string;
+  scoreBreakdown?: {
+    painUrgency: number;
+    audienceReachability: number;
+    budgetFit: number;
+    usageFrequency: number;
+    differentiationPotential: number;
+    evidenceStrength: number;
+  };
+  scoringRationale?: string;
+}
+
+export interface AssumptionTest {
+  assumption: string;
+  testMethod: string;
+  passSignal: string;
+  riskIfWrong: string;
+}
+
+export interface PrototypeAsset {
+  id: string;
+  title: string;
+  status: "generated" | "fallback";
+  reviewStatus?: "pending" | "selected" | "rejected" | "superseded";
+  telemetryStatus?: "generated" | "fallback" | "not-attempted";
+  variant: "primary" | "workflow" | "evidence" | "regenerated";
+  rationale: string;
+  prompt: string;
+  imageDataUrl?: string;
+  provider: "gpt-image-2" | "fallback";
+  attemptCount: number;
+  failureReason?: string;
+  lastAttemptAt: string;
+  createdAt: string;
+}
+
+export type PrototypeRejectionReason =
+  | "regenerate-prototype"
+  | "revise-prompt"
+  | "revise-prd"
+  | "return-synthesis";
+
+export interface BranchDecision {
+  id: string;
+  timestamp: string;
+  decision:
+    | "synthesis-approved"
+    | "synthesis-revision"
+    | "synthesis-rerun"
+    | "prototype-approved"
+    | "prototype-rejected"
+    | "prototype-regenerated";
+  fromWorkspace: WorkspaceId;
+  toWorkspace: WorkspaceId;
+  reason: string;
+  langGraphRoute: string[];
 }
 
 export interface RiskItem {
@@ -138,13 +229,17 @@ export interface MemoryEntry {
 
 export interface WorkflowNode {
   id: WorkspaceId;
+  stage: string;
   label: string;
   status: WorkflowStatus;
   assignedAgentId: string;
   dependencyNodeIds: WorkspaceId[];
+  requiredArtifactTypes: ArtifactType[];
+  validationCriteria: string[];
   outputArtifactIds: string[];
   retryCount: number;
   maxRetries: number;
+  nextNodeIds: WorkspaceId[];
 }
 
 export interface ProjectState {
@@ -161,6 +256,12 @@ export interface ProjectState {
   recommendation: "pending" | "pursue" | "refine" | "reject";
   integrationMode: "real-ready" | "fallback";
   operatingMode: "autonomous" | "paused" | "completed";
+  synthesisApproval: "not-started" | "pending" | "approved" | "revision-requested";
+  prototypeApproval: "not-started" | "pending" | "approved" | "rejected";
+  designValidation: "not-started" | "running" | "approved" | "blocked";
+  selectedPrototypeAssetId?: string;
+  prototypeRejectionReason?: PrototypeRejectionReason;
+  branchDecisions: BranchDecision[];
   generatedAt: string;
   updatedAt: string;
 }
@@ -176,10 +277,14 @@ export interface OrchestrationPackage {
   competitors: Competitor[];
   personas: PersonaReaction[];
   risks: RiskItem[];
+  marketLeads: MarketLead[];
+  assumptionTests: AssumptionTest[];
+  prototypeAssets: PrototypeAsset[];
   tasks: TaskItem[];
 }
 
 export interface PersistedAppState extends OrchestrationPackage {
+  schemaVersion: number;
   selectedWorkspace: WorkspaceId;
   isRunning: boolean;
 }

@@ -21,7 +21,7 @@ The core product promise is:
 
 > ConductorIQ autonomously coordinates continuously running AI agents to validate startup ideas and produce evidence-backed MVP recommendations.
 
-The product should showcase the orchestration experience, persistent workflow behavior, visible agent collaboration, artifact generation, validation loops, approval checkpoints, and cinematic execution state as a local application. It should use a real local LangGraph workflow to coordinate the validation agents, real OpenAI and Exa API calls for validation where possible, and OpenAI fallback when Exa is unavailable. It must not include authentication, billing, databases, queues, LangGraph Cloud, or production infrastructure. Completion is measured by validated feature coverage, workflow correctness, approval-gate behavior, persistence, and end-to-end browser verification rather than implementation speed.
+The product should showcase the orchestration experience, persistent workflow behavior, visible agent collaboration, artifact generation, validation loops, approval checkpoints, and cinematic execution state as a local application. It should use a real local LangGraph workflow to coordinate the validation agents and OpenAI API calls for reasoning, validation, PRD generation, critique, synthesis, and visual generation where available. If OpenAI is unavailable, the workflow must continue with clearly labelled deterministic local fallback output. It must not include authentication, billing, databases, queues, LangGraph Cloud, or production infrastructure. Completion is measured by validated feature coverage, workflow correctness, approval-gate behavior, persistence, and end-to-end browser verification rather than implementation speed.
 
 ## 2. Product Vision
 
@@ -76,7 +76,7 @@ ConductorIQ solves this by treating early market validation as a persistent grap
 - Generate interconnected artifacts across market research, strategy, PRD, synthesis, deployment-readiness, and launch recommendation.
 - Trigger critique and validation loops automatically.
 - Communicate the role of LangGraph as the internal orchestration engine.
-- Use the configured OpenAI and Exa keys for real validation calls while keeping persistence local.
+- Use the configured OpenAI key for real validation calls while keeping persistence local.
 - Deliver a completed, validated local product workflow with approval-gated MVP package generation.
 
 ### 5.2 Product Priorities
@@ -101,14 +101,14 @@ Required for the validated local product:
 - A Vite React TypeScript app that runs locally.
 - A cinematic shell with top navigation, left workspace navigation, main content, right context panel, and live log panel.
 - Six core workspaces only: Intake, Strategy, PRD Generation, Synthesis, Deployment, and Launch.
-- Real API-backed validation workflow using OpenAI and Exa, with deterministic UI state transitions for progress display only.
+- Real API-backed validation workflow using OpenAI, with deterministic UI state transitions for progress display only.
 - Local persistence with localStorage.
 - Visible agent roster, status changes, confidence scores, prompt artifacts, market leads, market signals, persona feedback, competitor insights, risk flags, comprehensive PRD artifacts, synthesis plan, prototype approval state, and generated artifacts.
 - A final build recommendation: pursue, refine, or reject, with supporting evidence and approval-gated launch package.
 
 Quality rules:
 
-- Use OpenAI fallback content only when Exa calls fail, time out, or return insufficient data, and label fallback evidence clearly.
+- Use deterministic fallback content only when OpenAI is unavailable, times out, or returns insufficient data, and label fallback evidence clearly.
 - Fallbacks must behave as explicit product states, not hidden bypasses.
 - Approval gates must be functional and must control downstream workflow progression.
 - PRD generation must produce a comprehensive artifact with review findings, not a compact summary.
@@ -135,7 +135,7 @@ The implementation should follow this sequence. Do not advance to later phases b
 | 1 | Project audit and scaffold | Dependency check, PRD gap list, runnable Vite React TypeScript app |
 | 2 | Cinematic shell | Top bar, six-workspace left nav, main panel, right context panel, and log panel render |
 | 3 | Prompt lifecycle | Crafted prompt, prompt critique, improved prompt, prompt quality score, and LangGraph prompt-validation state |
-| 4 | Strategy validation workspace | OpenAI + Exa or fallback market leads, market signals, competitors, personas, risks, validation questions, source labels, and confidence score |
+| 4 | Strategy validation workspace | OpenAI or deterministic fallback market leads, market signals, competitors, personas, risks, validation questions, source labels, and confidence score |
 | 5 | PRD Generation | Comprehensive PRD artifact, section completeness, PRD review findings, quality score, and revision requirements |
 | 6 | Synthesis | Review-first Synthesis Plan, interface improvements, validation gaps, rerun/revise/continue controls, and hold state |
 | 7 | Deployment and prototype review | GPT Image 2 prototype output or labelled visual prompt fallback, approval/rejection controls, and regeneration state |
@@ -184,7 +184,7 @@ The implementation should follow this sequence. Do not advance to later phases b
 5. A Prompt Validator Agent reviews the crafted prompt for clarity, specificity, missing context, target user, market assumptions, output format, and implementation feasibility.
 6. The prompt is improved automatically until it is specific enough to drive market validation, PRD generation, visual prototyping, and MVP planning.
 7. A local LangGraph `StateGraph` decomposes the improved prompt into the six required workspaces.
-8. Strategy agents execute market lead discovery, competitor analysis, persona validation, assumption testing, risk analysis, and validation scoring using OpenAI and Exa where possible.
+8. Strategy agents execute market lead discovery, competitor analysis, persona validation, assumption testing, risk analysis, and validation scoring using OpenAI where possible.
 9. PRD Generation produces a comprehensive startup-quality `PRD.md` artifact, using this ConductorIQ PRD as the structural reference standard for depth, hierarchy, implementation orientation, risks, acceptance criteria, data models, workflow behavior, and UI requirements.
 10. PRD Reviewer and QA Critic agents review the generated `PRD.md`, identify gaps, improve weak sections, and produce an explicit PRD quality score before the workflow continues.
 11. Synthesis does not immediately rush into build execution. It first reviews all upstream evidence, generated PRD sections, market leads, persona objections, risks, interface requirements, and prototype direction.
@@ -331,7 +331,7 @@ The orchestration engine should route work based on:
 
 ### 10.4 Continuous Execution
 
-ConductorIQ should feel continuously active. For this MVP, workflow progression should be driven by a real local LangGraph `StateGraph`, real OpenAI and Exa calls where possible, and deterministic local state transitions for visual progress, retries, and status updates. LangGraph should route the major workflow stages and agent handoffs; UI timers may animate progress and logs, but they must not replace the graph as the primary workflow coordinator. The current MVP must not require LangGraph Cloud, databases, queues, or production-hosted jobs.
+ConductorIQ should feel continuously active. For this MVP, workflow progression should be driven by a real local LangGraph `StateGraph`, real OpenAI calls where possible, and deterministic local state transitions for visual progress, retries, and status updates. LangGraph should route the major workflow stages and agent handoffs; UI timers may animate progress and logs, but they must not replace the graph as the primary workflow coordinator. The current MVP must not require LangGraph Cloud, databases, queues, or production-hosted jobs.
 
 Continuous execution should include:
 
@@ -351,7 +351,7 @@ To keep the local product maintainable, the LangGraph implementation should be f
 - Use `@langchain/langgraph` with a single local `StateGraph`.
 - Model the six top-level nodes as `intake`, `strategy`, `prdGeneration`, `synthesis`, `deployment`, and `launch`.
 - Keep graph state serializable so snapshots can be persisted to localStorage.
-- Route Exa failure or insufficient evidence to an OpenAI fallback branch.
+- Route OpenAI failure or insufficient evidence to a deterministic local fallback branch.
 - Route weak validation confidence to a critique or revision pass before final synthesis.
 - Route weak prompt quality back to Prompt Architect before market validation.
 - Route weak PRD quality back to PRD Agent before Synthesis.
@@ -423,7 +423,7 @@ Each artifact should include:
 - Content payload.
 - Review status when applicable.
 - Approval status when applicable.
-- Evidence source label: Exa, OpenAI, GPT Image 2, fallback, user input, or deterministic local validation.
+- Evidence source label: OpenAI, GPT Image 2, fallback, user input, or deterministic local validation.
 
 ### 11.3 Artifact States
 
@@ -565,7 +565,7 @@ The interface improvement layer should provide:
 ### 13.3 Agent Execution
 
 - Each required agent appears in the UI.
-- Agents generate visible outputs from OpenAI, Exa, or OpenAI fallback.
+- Agents generate visible outputs from OpenAI or deterministic local fallback.
 - Agent state changes are visible.
 - Agents pass artifacts to downstream agents.
 - Agents can wait on dependencies.
@@ -618,9 +618,8 @@ The interface improvement layer should provide:
 - Strategy must look for market leads and validation signals, not only generic market summaries.
 - Market leads may include customer segments, buyer titles, communities, search queries, competitor users, pain indicators, and possible interview targets.
 - Each market lead should include rationale, likely pain, validation question, confidence, and evidence source.
-- Exa should be used for market and competitor discovery where available.
-- OpenAI should synthesize lead quality, persona fit, urgency, and validation gaps.
-- If Exa fails, OpenAI fallback should produce clearly labelled synthetic market lead hypotheses.
+- OpenAI should produce market and competitor discovery, lead quality synthesis, persona fit analysis, urgency assessment, and validation gaps.
+- If OpenAI fails or is unavailable, deterministic local fallback should produce clearly labelled hypothesis-only market lead outputs.
 - Synthesis must distinguish evidence-backed leads from hypothesis-only leads.
 
 ### 13.9 Persistent Local State
@@ -634,7 +633,7 @@ The interface improvement layer should provide:
 
 - The product should continue updating visible states while validation is active.
 - Logs, nodes, agent statuses, and artifact cards should update based on real request lifecycle states and deterministic local workflow ticks.
-- Deterministic ticks are allowed for progress visualization only; validation outputs should come from OpenAI, Exa, or OpenAI fallback.
+- Deterministic ticks are allowed for progress visualization only; validation outputs should come from OpenAI or clearly labelled deterministic fallback.
 - The workflow must run locally without a database.
 - Workflow state, generated artifacts, agent states, execution logs, validation scores, and PRD content must be persisted locally.
 
@@ -663,7 +662,7 @@ The interface improvement layer should provide:
 - Responsive UI on desktop and acceptable behavior on tablet-sized screens.
 - High visual polish suitable for a product walkthrough.
 - Low setup friction.
-- OpenAI and Exa keys may be required for real validation; OpenAI fallback must handle Exa failure.
+- An OpenAI key may be required for real validation; deterministic fallback must handle OpenAI unavailability.
 - No database required.
 - No blocking dependency on production infrastructure.
 - Stable state transitions with no confusing dead ends.
@@ -680,16 +679,15 @@ The interface improvement layer should provide:
 - `@langchain/langgraph`.
 - `@langchain/core` if required by the LangGraph implementation.
 - Browser localStorage or IndexedDB.
-- Local LangGraph orchestration runtime with real OpenAI + Exa validation calls.
+- Local LangGraph orchestration runtime with real OpenAI validation calls.
 
-As of 2026-05-17, the local repository has `package.json` and `package-lock.json` with the MVP dependency baseline installed: React, React DOM, Vite, TypeScript, TailwindCSS, `@tailwindcss/vite`, `@langchain/langgraph`, `@langchain/core`, `openai`, `exa-js`, `lucide-react`, and `clsx`. Implementation should verify this with `npm ls --depth=0` before coding and reinstall only if the lockfile or installed modules are inconsistent.
+As of 2026-05-17, the local repository has `package.json` and `package-lock.json` with the MVP dependency baseline installed: React, React DOM, Vite, TypeScript, TailwindCSS, `@tailwindcss/vite`, `@langchain/langgraph`, `@langchain/core`, `openai`, `lucide-react`, and `clsx`. Implementation should verify this with `npm ls --depth=0` before coding and reinstall only if the lockfile or installed modules are inconsistent.
 
 ### 15.2 API-Backed Product Architecture
 
-The MVP should use real OpenAI and Exa calls while keeping all storage local and avoiding databases.
+The MVP should use real OpenAI calls while keeping all storage local and avoiding databases.
 
-- OpenAI should power reasoning, synthesis, persona simulation, risk analysis, PRD generation, critique, fallback market research, and final recommendation.
-- Exa should power market research, competitor discovery, and external evidence gathering.
+- OpenAI should power reasoning, market research synthesis, competitor discovery hypotheses, persona simulation, risk analysis, PRD generation, critique, fallback market research, and final recommendation.
 - GPT Image 2 (`gpt-image-2`) should power generated visual assets, concept images, or launch/hero imagery when image generation is needed.
 - LangGraph should execute the local agent workflow through a compact `StateGraph` and also be represented clearly in the UI as the orchestration backbone.
 - Stitch MCP remains an optional design reference and screen-generation tool, not a runtime dependency.
@@ -718,16 +716,16 @@ For the validated local product, implementation must use:
 - A minimal local LangGraph `StateGraph` for workspace routing and agent handoffs.
 - Static agent definitions.
 - Deterministic frontend state machines for UI animation and progress display.
-- Real OpenAI + Exa request lifecycle states.
-- OpenAI fallback outputs when Exa fails or times out.
+- Real OpenAI request lifecycle states.
+- Deterministic fallback outputs when OpenAI fails, times out, or is unavailable.
 - Staged artifact generation.
 - Rotating execution logs.
 - GPT Image 2 for generated visual artifacts when required.
 - UI-first architecture that can later be connected to real integrations.
 
-The MVP must run without a database. If secrets cannot be safely called from the browser, use a minimal local API proxy for OpenAI and Exa while keeping all persistence in localStorage. The local LangGraph graph must remain lightweight enough to run without hosted workflow infrastructure.
+The MVP must run without a database. If secrets cannot be safely called from the browser, use a minimal local API proxy for OpenAI while keeping all persistence in localStorage. The local LangGraph graph must remain lightweight enough to run without hosted workflow infrastructure.
 
-Dependency verification is part of the implementation contract. Before building features, confirm that `@langchain/langgraph`, `@langchain/core`, `openai`, `exa-js`, React, Vite, TypeScript, and TailwindCSS are installed and available from the current lockfile.
+Dependency verification is part of the implementation contract. Before building features, confirm that `@langchain/langgraph`, `@langchain/core`, `openai`, React, Vite, TypeScript, and TailwindCSS are installed and available from the current lockfile.
 
 ## 16. Suggested TypeScript Data Models
 
@@ -843,7 +841,7 @@ interface Artifact {
   confidence: number;
   summary: string;
   content: string;
-  evidenceSource?: "user-input" | "openai" | "exa" | "gpt-image-2" | "fallback" | "deterministic-local";
+  evidenceSource?: "user-input" | "openai" | "gpt-image-2" | "fallback" | "deterministic-local";
   reviewStatus?: "not-reviewed" | "under-review" | "reviewed" | "revision-required";
   approvalStatus?: "not-required" | "pending" | "approved" | "rejected";
   updatedAt: string;
@@ -898,7 +896,7 @@ The product is acceptable when:
 - The user can download a static MVP package generated locally with no database connection.
 - Reloading the app preserves meaningful workflow state.
 - The product copy explicitly communicates LangGraph as the internal orchestration backbone.
-- The app builds successfully with no database and uses OpenAI/Exa keys only through local environment configuration.
+- The app builds successfully with no database and uses the OpenAI key only through local environment configuration.
 
 ### 17.1 Full Workflow Validation Matrix
 
@@ -909,7 +907,7 @@ The product should be validated against the complete intended workflow, not only
 | Manual idea intake | User enters a rough idea and sees crafted prompt, prompt critique, improved prompt, and initialized graph state |
 | File-based intake | User imports a `.txt` or `.md` idea brief and the prompt lifecycle still runs |
 | Market validation | Strategy shows market leads, market signals, competitors, personas, risks, validation questions, source labels, and confidence score |
-| External fallback | If Exa or OpenAI is unavailable, fallback outputs are labelled and the workflow does not stall |
+| External fallback | If OpenAI is unavailable, fallback outputs are labelled and the workflow does not stall |
 | Comprehensive PRD | PRD Generation produces a detailed PRD artifact with sections comparable in depth and structure to this ConductorIQ PRD |
 | PRD review | PRD Reviewer surfaces missing sections, ambiguity flags, implementation gaps, and a PRD quality score |
 | Synthesis hold | Synthesis reviews upstream outputs, generates a comprehensive Synthesis Plan, and pauses before prototype/build progression |
@@ -941,9 +939,9 @@ The product should be considered incomplete if:
 | --- | --- | --- |
 | Product feels like a chatbot | Weak differentiation | Keep input limited to intake and focus UI on graph, agents, logs, artifacts, and memory |
 | LangGraph role is misunderstood | Architecture confusion | State clearly that LangGraph is product runtime architecture, not Codex's build workflow |
-| MVP overengineers backend | Slower product validation and unnecessary complexity | Use localStorage for persistence and only a minimal local API proxy if needed to protect OpenAI/Exa secrets |
+| MVP overengineers backend | Slower product validation and unnecessary complexity | Use localStorage for persistence and only a minimal local API proxy if needed to protect OpenAI secrets |
 | Autonomy feels fake | Weak product credibility | Make state transitions coherent, dependency-driven, and tied to artifacts |
-| Real integration scope expands too far | Broken workflow or scope creep | Use only a focused local LangGraph `StateGraph`, OpenAI + Exa for validation, GPT Image 2 for visuals, and keep Stitch/Codex as lightweight UI concepts |
+| Real integration scope expands too far | Broken workflow or scope creep | Use only a focused local LangGraph `StateGraph`, OpenAI for validation, GPT Image 2 for visuals, and keep Stitch/Codex as lightweight UI concepts |
 | Visuals feel generic | Reduced impact | Follow screenshot-inspired cinematic dark UI with neon operational details |
 | Workflow stalls | Bad live experience | Ensure timer-driven progression and retry fallback paths |
 
@@ -952,7 +950,7 @@ The product should be considered incomplete if:
 - LangGraph Cloud-backed durable workflow execution.
 - Hosted durable workflows.
 - More comprehensive OpenAI generation for every agent.
-- Deeper Exa market research integration.
+- Optional external web research provider integration.
 - Real Stitch MCP design generation and asset persistence.
 - GitHub or local repo scaffolding integration.
 - Multi-project dashboard.

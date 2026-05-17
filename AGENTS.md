@@ -61,7 +61,7 @@ Completion evidence should include:
 - Persistent workflow state.
 - Local LangGraph `StateGraph` execution across the required workspaces.
 - Visible multi-agent orchestration.
-- Generated artifacts from OpenAI, Exa, or OpenAI fallback.
+- Generated artifacts from OpenAI or deterministic local fallback.
 - Validation and critique loops.
 - Prompt craft, prompt validation, and prompt improvement artifacts.
 - Comprehensive generated PRD artifact and PRD review artifact.
@@ -77,7 +77,7 @@ LangGraph completion evidence should include implementation paths where the loca
 - A normal path that reaches the Synthesis hold state.
 - An approval path where prototype approval unlocks Launch/build-preparation outputs.
 - A rejection or revision path where rejected prototype or weak synthesis routes back to prompt improvement, PRD revision, or prototype regeneration.
-- An Exa failure or insufficient-evidence branch that routes to OpenAI fallback and labels the evidence correctly.
+- An OpenAI failure or insufficient-evidence branch that routes to deterministic local fallback and labels the evidence correctly.
 
 When the user starts work with `/goal`, Codex must treat the goal as an active implementation contract:
 
@@ -131,9 +131,9 @@ Codex should operate as a compact implementation team during `/goal` work. These
 - Product Extractor: read `PRD.md`, extract the six workspaces, acceptance criteria, constraints, real API requirements, and workflow states before coding.
 - Implementation Lead: build the Vite React TypeScript app, keep architecture simple, and prioritize runnable increments.
 - UI Builder: implement the cinematic frontend shell, workspace panels, agent cards, logs, scores, artifacts, and visual hierarchy from `Assets/`.
-- Workflow Engineer: implement localStorage persistence, local file import, static package download, LangGraph `StateGraph` routing, deterministic UI ticks, OpenAI/Exa request lifecycle states, OpenAI fallback, agent state transitions, approval gates, revision loops, and recommendation scoring.
+- Workflow Engineer: implement localStorage persistence, local file import, static package download, LangGraph `StateGraph` routing, deterministic UI ticks, OpenAI request lifecycle states, deterministic fallback, agent state transitions, approval gates, revision loops, and recommendation scoring.
 - Prompt Systems Engineer: implement crafted prompt, prompt critique, improved prompt, prompt quality score, and prompt revision loop.
-- Research Validation Engineer: implement market leads, validation questions, competitor evidence, persona objections, source labels, confidence scoring, and Exa/OpenAI fallback labeling.
+- Research Validation Engineer: implement market leads, validation questions, competitor evidence, persona objections, source labels, confidence scoring, and OpenAI/deterministic fallback labeling.
 - PRD Systems Engineer: implement comprehensive PRD generation, PRD section completeness, PRD reviewer findings, quality score, and revision requirements.
 - Prototype Systems Engineer: implement GPT Image 2 prototype generation or labelled fallback visual prompt cards, prototype approval/rejection, and regeneration states.
 - Launch Package Engineer: implement implementation plan, component map, build-preparation agent outputs, final package summary, and static export contents.
@@ -170,7 +170,7 @@ Codex does not need to use LangGraph as its own development workflow. Codex may 
 Current dependency baseline:
 
 - `package.json` and `package-lock.json` are present.
-- React, React DOM, Vite, TypeScript, TailwindCSS, `@tailwindcss/vite`, `@langchain/langgraph`, `@langchain/core`, `openai`, `exa-js`, `lucide-react`, and `clsx` have been installed locally.
+- React, React DOM, Vite, TypeScript, TailwindCSS, `@tailwindcss/vite`, `@langchain/langgraph`, `@langchain/core`, `openai`, `lucide-react`, and `clsx` have been installed locally.
 - Future Codex runs should verify this baseline with `npm ls --depth=0` before coding and should run `npm install` only if packages are missing or the lockfile is inconsistent.
 
 When implementing the MVP:
@@ -182,9 +182,9 @@ When implementing the MVP:
 - Do not create extra top-level workspaces beyond Intake, Strategy, PRD Generation, Synthesis, Deployment, and Launch.
 - Do not implement databases, authentication, billing, queues, workers, or production infrastructure.
 - Do not use LangGraph Cloud, hosted checkpointers, database-backed checkpointing, queues, or worker infrastructure.
-- Use the configured OpenAI and Exa keys for real validation calls.
-- If browser-side calls would expose secrets, use a minimal local API proxy for OpenAI and Exa only; keep all persistence in localStorage.
-- Use OpenAI as the fallback provider when Exa fails, times out, or returns insufficient market evidence.
+- Use the configured OpenAI key for real validation calls.
+- If browser-side calls would expose secrets, use a minimal local API proxy for OpenAI only; keep all persistence in localStorage.
+- Use deterministic local fallback when OpenAI fails, times out, is unavailable, or returns insufficient market evidence.
 - Use GPT Image 2 (`gpt-image-2`) for generated visual assets when image generation is needed.
 - Support importing a local `.txt` or `.md` idea brief through the browser File API.
 - Support downloading a local static MVP package from the Launch workspace; do not implement hosted deployment.
@@ -271,7 +271,7 @@ Codex must not mark a goal complete until all deep completion gates are either i
 - Gate 3: Prompt Validator produces critique, improved prompt, and prompt quality score.
 - Gate 4: LangGraph records prompt validation before Strategy runs.
 - Gate 5: Strategy produces market leads, market signals, competitors, personas, risks, validation questions, evidence-source labels, and confidence score.
-- Gate 6: Exa/OpenAI real-call path is attempted when safely configured, and fallback path is clearly labelled when unavailable.
+- Gate 6: OpenAI real-call path is attempted when safely configured, and deterministic fallback path is clearly labelled when unavailable.
 - Gate 7: PRD Generation produces a comprehensive PRD artifact with strong hierarchy and implementation detail.
 - Gate 8: PRD Reviewer produces review findings, missing-section flags, and PRD quality score.
 - Gate 9: Synthesis produces a comprehensive Synthesis Plan and enters a visible hold state before prototype/build progression.

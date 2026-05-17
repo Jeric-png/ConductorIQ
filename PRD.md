@@ -365,7 +365,7 @@ The UI should be cinematic, technical, and operational. It should not resemble a
 
 ### 12.1 Visual Direction
 
-Use the local screenshot references as the product's visual baseline:
+Use the local design references in the `Assets/` folder as the product's visual baseline:
 
 - Dark black and charcoal surfaces.
 - Cyan and purple neon accents.
@@ -701,4 +701,4 @@ The MVP is acceptable when:
 ## 20. Source References
 
 - OpenAI Cookbook: [Using Goals in Codex](https://developers.openai.com/cookbook/examples/codex/using_goals_in_codex).
-- Local design references in this workspace: `Screenshot 2026-05-17 at 9.19.46 AM.png` through `Screenshot 2026-05-17 at 9.20.55 AM.png`.
+- Local design references in this workspace: the screenshot assets stored in `Assets/`.

@@ -8,6 +8,10 @@ The product is designed to answer one early-stage startup question:
 
 ConductorIQ is not a chatbot. It is a local orchestration product that presents the experience of activating an autonomous validation team: prompt architects, market analysts, PRD agents, synthesis critics, prototype agents, design validators, and launch planners working through a structured graph.
 
+## Demo
+
+Watch the ConductorIQ product demo: [https://youtu.be/poWZoBo7eAU](https://youtu.be/poWZoBo7eAU)
+
 ## Problem Statement
 
 Founders often move from idea to build too quickly. A rough idea may sound promising, but it usually lacks validation around target users, pain severity, competitive pressure, assumptions, risks, MVP scope, and user willingness to adopt or pay.
@@ -515,4 +519,3 @@ ConductorIQ is built around one principle:
 > Do not build before validation is coherent.
 
 The interface is intentionally operational and artifact-centric. It makes the validation process visible: agents coordinate, graph states advance, memory updates, artifacts depend on one another, critique loops create revision paths, and Launch remains locked until the product direction is explicitly approved.
-

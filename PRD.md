@@ -21,7 +21,7 @@ The core product promise is:
 
 > ConductorIQ autonomously coordinates continuously running AI agents to validate startup ideas and produce evidence-backed MVP recommendations.
 
-The MVP should demonstrate the orchestration experience, persistent workflow behavior, visible agent collaboration, artifact generation, validation loops, and cinematic execution state as a frontend-only local application. It must not include backend services, authentication, billing, databases, server APIs, queues, or production infrastructure. The implementation must be scoped to a 2 hour 30 minute build window.
+The MVP should demonstrate the orchestration experience, persistent workflow behavior, visible agent collaboration, artifact generation, validation loops, and cinematic execution state as a local application. It should use real OpenAI and Exa API calls for validation where possible, with OpenAI fallback when Exa is unavailable. It must not include authentication, billing, databases, queues, or production infrastructure. The implementation must be scoped to a 2 hour 30 minute build window.
 
 ## 2. Product Vision
 
@@ -76,7 +76,7 @@ ConductorIQ solves this by treating early market validation as a persistent grap
 - Generate interconnected artifacts across market research, strategy, PRD, synthesis, deployment-readiness, and launch recommendation.
 - Trigger critique and validation loops automatically.
 - Communicate the role of LangGraph as the internal orchestration engine.
-- Run entirely in the browser without API keys or a backend server.
+- Use the configured OpenAI and Exa keys for real validation calls while keeping persistence local.
 - Deliver a polished local MVP demonstration within a hard 2 hour 30 minute implementation constraint.
 
 ### 5.2 MVP Priorities
@@ -101,21 +101,21 @@ Required within 2 hours 30 minutes:
 - A Vite React TypeScript app that runs locally.
 - A cinematic shell with top navigation, left workspace navigation, main content, right context panel, and live log panel.
 - Six core workspaces only: Intake, Strategy, PRD Generation, Synthesis, Deployment, and Launch.
-- Frontend-only simulated workflow state using timers and deterministic transitions.
+- Real API-backed validation workflow using OpenAI and Exa, with deterministic UI state transitions for progress display only.
 - Local persistence with localStorage.
 - Visible agent roster, status changes, confidence scores, market signals, persona feedback, competitor insights, risk flags, and generated artifacts.
 - A final build recommendation: pursue, refine, or reject, with supporting evidence.
 
 Allowed shortcuts:
 
-- Use hardcoded/mock validation content generated from the submitted idea.
+- Use OpenAI fallback content only when Exa calls fail, time out, or return insufficient data.
 - Use CSS-built panels, cards, graphs, and mock diagrams instead of real charting or graph libraries.
-- Simulate LangGraph, OpenAI, Exa, Stitch MCP, and Codex/Cursor integrations as UI concepts only.
+- Simulate LangGraph and Codex/Cursor orchestration as UI concepts only.
 - Represent design assets as references rather than generating new assets.
 
 Out of scope for the 2 hour 30 minute MVP unless all required items are complete:
 
-- Real API calls.
+- Database-backed persistence.
 - Real LangGraph execution.
 - Complex graph editing.
 - Multiple projects.
@@ -131,8 +131,8 @@ The implementation should follow this timeboxed sequence. If time runs short, pr
 | --- | --- | --- |
 | 0:00-0:15 | Project scaffold and baseline styling | Vite React TypeScript app starts locally with TailwindCSS loaded |
 | 0:15-0:40 | Cinematic shell | Top bar, six-workspace left nav, main panel, right context panel, and log panel render |
-| 0:40-1:05 | Local orchestration state | Idea intake initializes workflow state, agents, scores, logs, and localStorage persistence |
-| 1:05-1:40 | Strategy validation workspace | Market signals, competitors, personas, risks, validation confidence, and agent activity display |
+| 0:40-1:05 | Local orchestration state and API proxy | Idea intake initializes workflow state, agents, scores, logs, localStorage persistence, and real validation request handlers |
+| 1:05-1:40 | Strategy validation workspace | OpenAI + Exa market signals, competitors, personas, risks, validation confidence, and agent activity display |
 | 1:40-2:05 | PRD Generation and Synthesis | PRD summary, feature priorities, critique loop, and pursue/refine/reject recommendation display |
 | 2:05-2:20 | Deployment and Launch | MVP scope, readiness score, launch next actions, and final package summary display |
 | 2:20-2:30 | Verification and polish | Build succeeds, reload persists state, demo flow works end-to-end |
@@ -143,13 +143,13 @@ The implementation should follow this timeboxed sequence. If time runs short, pr
 - Billing.
 - Team administration.
 - Enterprise permissions.
-- Backend servers or server APIs.
+- Production backend services.
 - Databases or production persistence services.
 - Queues or background worker infrastructure.
 - Production-grade backend infrastructure.
 - Microservices.
 - Hosted long-running job infrastructure.
-- Required API keys or live third-party API calls.
+- Database-backed persistence.
 - Real deployment automation.
 - Full implementation of every generated MVP scaffold.
 - Complex account or organization management.
@@ -175,11 +175,11 @@ The implementation should follow this timeboxed sequence. If time runs short, pr
 1. The user enters a rough startup or software idea, for example: "Build an AI-native cybersecurity SOC assistant."
 2. ConductorIQ initializes a project and stores the raw idea in project memory.
 3. The UI represents a LangGraph-style orchestration engine decomposing the idea into the six required workspaces.
-4. Specialized agents simulate idea refinement, market research, competitor analysis, persona validation, risk analysis, PRD generation, synthesis, deployment-readiness, and launch recommendation tasks.
+4. Specialized agents execute idea refinement, market research, competitor analysis, persona validation, risk analysis, PRD generation, synthesis, deployment-readiness, and launch recommendation tasks using OpenAI and Exa where possible.
 5. Generated artifacts appear progressively in the active workspace and right-side context panel.
 6. Validation agents critique market evidence, persona fit, competitor pressure, MVP scope, and launch risk.
-7. The simulated LangGraph runtime routes execution based on task completion, dependencies, validation results, critique outcomes, and workflow state.
-8. Simulated OpenAI, Exa, Stitch MCP, and Codex/Cursor integration points appear as architecture concepts in logs, cards, and agent activity.
+7. The local orchestration runtime routes execution based on task completion, dependencies, validation results, critique outcomes, and workflow state.
+8. OpenAI and Exa activity appears in logs, cards, artifacts, and recommendation evidence; if Exa fails, OpenAI generates a clearly labelled fallback market-research synthesis.
 9. The system revisits weak assumptions and improves the recommendation autonomously.
 10. The final output becomes an evidence-backed MVP Foundation Package with a pursue, refine, or reject recommendation.
 
@@ -306,7 +306,7 @@ The orchestration engine should route work based on:
 
 ### 10.4 Continuous Execution
 
-ConductorIQ should feel continuously active. For this MVP, continuous execution must be simulated entirely on the frontend with timers, deterministic state machines, mock agent outputs, staged artifact generation, rotating logs, and local browser persistence. The UI should describe a future LangGraph-backed engine, but the current MVP must not require LangGraph runtime execution, backend workers, queues, or server-hosted jobs.
+ConductorIQ should feel continuously active. For this MVP, workflow progression should be driven by real OpenAI and Exa calls where possible, with deterministic local state transitions for visual progress, retries, and status updates. The UI should describe a future LangGraph-backed engine, but the current MVP must not require LangGraph runtime execution, databases, queues, or production-hosted jobs.
 
 Continuous execution should include:
 
@@ -483,7 +483,7 @@ The interface should continuously signal autonomy:
 ### 13.3 Agent Execution
 
 - Each required agent appears in the UI.
-- Agents generate visible outputs or simulated summaries.
+- Agents generate visible outputs from OpenAI, Exa, or OpenAI fallback.
 - Agent state changes are visible.
 - Agents pass artifacts to downstream agents.
 - Agents can wait on dependencies.
@@ -510,10 +510,10 @@ The interface should continuously signal autonomy:
 
 ### 13.7 Continuous Activity Simulation
 
-- The MVP should continue updating visible states on a timer while active.
-- Logs, nodes, agent statuses, and artifact cards should update even without user interaction.
-- The simulation must feel coherent and deterministic, not random noise.
-- The simulation must run entirely in the browser.
+- The MVP should continue updating visible states while validation is active.
+- Logs, nodes, agent statuses, and artifact cards should update based on real request lifecycle states and deterministic local workflow ticks.
+- Deterministic ticks are allowed for progress visualization only; validation outputs should come from OpenAI, Exa, or OpenAI fallback.
+- The workflow must run locally without a database.
 - Workflow state, generated artifacts, agent states, execution logs, validation scores, and PRD content must be persisted locally.
 
 ### 13.8 Prohibited MVP Infrastructure
@@ -521,11 +521,9 @@ The interface should continuously signal autonomy:
 - Do not implement authentication.
 - Do not implement billing.
 - Do not implement databases.
-- Do not implement server APIs.
-- Do not implement backend services.
+- Do not implement production backend services.
 - Do not implement queues or workers.
-- Do not require API keys.
-- Do not require LangGraph, OpenAI, Exa, Stitch MCP, Codex, or Cursor integrations to be functional at runtime.
+- Do not require LangGraph, Stitch MCP, Codex, or Cursor integrations to be functional at runtime.
 
 ## 14. Non-Functional Requirements
 
@@ -533,8 +531,8 @@ The interface should continuously signal autonomy:
 - Responsive UI on desktop and acceptable behavior on tablet-sized screens.
 - High visual polish suitable for a live demo.
 - Low setup friction.
-- No API keys required.
-- No backend server required.
+- OpenAI and Exa keys may be required for real validation; OpenAI fallback must handle Exa failure.
+- No database required.
 - No blocking dependency on production infrastructure.
 - Stable state transitions with no confusing dead ends.
 - Modular code structure suitable for rapid extension.
@@ -548,19 +546,20 @@ The interface should continuously signal autonomy:
 - Vite.
 - TailwindCSS.
 - Browser localStorage or IndexedDB.
-- Frontend-only simulated orchestration runtime.
+- Local orchestration runtime with real OpenAI + Exa validation calls.
 
-### 15.2 Simulated Product Architecture Concepts
+### 15.2 API-Backed Product Architecture
 
-The MVP should represent the following systems as product architecture concepts and simulated integration points inside the UI:
+The MVP should use real OpenAI and Exa calls while keeping all storage local and avoiding databases.
 
-- LangGraph as the internal orchestration engine concept.
-- OpenAI as the reasoning and generation provider concept.
-- Exa as the market research provider concept.
-- Stitch MCP as the UI/UX generation and design iteration concept.
-- Codex/Cursor-style implementation agents as MVP scaffolding concepts.
+- OpenAI should power reasoning, synthesis, persona simulation, risk analysis, PRD generation, critique, fallback market research, and final recommendation.
+- Exa should power market research, competitor discovery, and external evidence gathering.
+- GPT Image 2 (`gpt-image-2`) should power generated visual assets, concept images, or launch/hero imagery when image generation is needed.
+- LangGraph remains the future orchestration engine concept represented in the UI.
+- Stitch MCP remains an optional design reference and screen-generation tool, not a runtime dependency.
+- Codex/Cursor-style implementation agents remain MVP scaffolding concepts represented in the UI.
 
-Real integrations can be added later, but they must not be required for the current MVP.
+Implementation should read keys from local environment variables and never commit secrets.
 
 Stitch MCP access must not block the 2 hour 30 minute MVP. If a Stitch MCP connector is available in the environment, Codex may inspect whether a ConductorIQ design/project is accessible and reference it as an external design source. If no Stitch MCP tool is exposed, the UI should continue using local `Assets/` references and simulated Stitch activity in agent logs and design cards.
 
@@ -568,6 +567,8 @@ Verified Stitch reference as of 2026-05-17:
 
 - Project title: `ConductorIQ Orchestration Workspace`.
 - Project resource: `projects/11643138006250717621`.
+- Generated MVP screen: `ConductorIQ Strategic Intelligence Hub`.
+- Generated screen resource: `projects/11643138006250717621/screens/dd063358fe864ec2a5c2378c321ae44f`.
 - Visibility: private.
 - Device type: desktop.
 - Theme signals: dark mode, Geist headline typography, Inter body typography, JetBrains Mono labels, purple custom accent.
@@ -577,18 +578,17 @@ Verified Stitch reference as of 2026-05-17:
 
 For the hackathon MVP, implementation must use:
 
-- In-memory orchestration plus localStorage or IndexedDB persistence.
+- In-memory orchestration plus localStorage persistence.
 - Static agent definitions.
 - Deterministic frontend state machines.
-- Timer-driven state transitions.
-- Mock agent outputs.
+- Real OpenAI + Exa request lifecycle states.
+- OpenAI fallback outputs when Exa fails or times out.
 - Staged artifact generation.
 - Rotating execution logs.
-- Simulated LangGraph, OpenAI, Exa, Stitch MCP, and coding-agent outputs.
-- Mock artifacts with realistic content.
+- GPT Image 2 for generated visual artifacts when required.
 - UI-first architecture that can later be connected to real integrations.
 
-The MVP must run without API keys and without a backend server. It should still model the intended production architecture faithfully enough that LangGraph's future role is clear.
+The MVP must run without a database. If secrets cannot be safely called from the browser, use a minimal local API proxy for OpenAI and Exa while keeping all persistence in localStorage. It should still model the intended production architecture faithfully enough that LangGraph's future role is clear.
 
 ## 16. Suggested TypeScript Data Models
 
@@ -732,7 +732,7 @@ The MVP is acceptable within the 2 hour 30 minute build window when:
 - The final state presents an MVP Foundation Package with market evidence, competitor insights, persona feedback, PRD summary, MVP scope, risk notes, and launch next actions.
 - Reloading the app preserves meaningful workflow state.
 - The product copy explicitly communicates LangGraph as the internal orchestration backbone.
-- The app builds successfully with no backend, no server APIs, no database, and no required API keys.
+- The app builds successfully with no database and uses OpenAI/Exa keys only through local environment configuration.
 
 ## 18. Risks and Mitigations
 
@@ -740,9 +740,9 @@ The MVP is acceptable within the 2 hour 30 minute build window when:
 | --- | --- | --- |
 | Product feels like a chatbot | Weak differentiation | Keep input limited to intake and focus UI on graph, agents, logs, artifacts, and memory |
 | LangGraph role is misunderstood | Architecture confusion | State clearly that LangGraph is product runtime architecture, not Codex's build workflow |
-| MVP overengineers backend | Missed demo deadline | Use localStorage or IndexedDB and deterministic frontend simulation only |
+| MVP overengineers backend | Missed demo deadline | Use localStorage for persistence and only a minimal local API proxy if needed to protect OpenAI/Exa secrets |
 | Autonomy feels fake | Weak demo credibility | Make state transitions coherent, dependency-driven, and tied to artifacts |
-| Real integrations are mistaken as required | Broken demo or scope creep | Treat LangGraph, OpenAI, Exa, Stitch MCP, and coding agents as simulated UI concepts |
+| Real integration scope expands too far | Broken demo or scope creep | Use only OpenAI + Exa for validation, GPT Image 2 for visuals, and keep LangGraph/Stitch/Codex as lightweight UI concepts |
 | Visuals feel generic | Reduced impact | Follow screenshot-inspired cinematic dark UI with neon operational details |
 | Workflow stalls | Bad live experience | Ensure timer-driven progression and retry fallback paths |
 
@@ -750,8 +750,8 @@ The MVP is acceptable within the 2 hour 30 minute build window when:
 
 - Real LangGraph-backed workflow execution.
 - Hosted durable workflows.
-- Real OpenAI generation for every agent.
-- Real Exa market research integration.
+- More comprehensive OpenAI generation for every agent.
+- Deeper Exa market research integration.
 - Real Stitch MCP design generation and asset persistence.
 - GitHub or local repo scaffolding integration.
 - Multi-project dashboard.
@@ -767,6 +767,7 @@ Future roadmap items must not be implemented in the 2 hour 30 minute MVP unless 
 ## 20. Source References
 
 - OpenAI Cookbook: [Using Goals in Codex](https://developers.openai.com/cookbook/examples/codex/using_goals_in_codex).
+- OpenAI model reference: [GPT Image 2](https://developers.openai.com/api/docs/models/gpt-image-2).
 - Verified Stitch project reference: `ConductorIQ Orchestration Workspace` at `projects/11643138006250717621`.
 
 | Local Design Reference | Path |

@@ -57,7 +57,7 @@ Completion evidence should include:
 - Implemented pages and components mapped to PRD requirements.
 - Persistent workflow state.
 - Visible multi-agent orchestration.
-- Generated or simulated artifacts.
+- Generated artifacts from OpenAI, Exa, or OpenAI fallback.
 - Validation and critique loops.
 - Updated `PROGRESS.md`.
 
@@ -103,10 +103,10 @@ Two-hour-thirty execution budget:
 
 Codex should operate as a compact implementation team during `/goal` work. These are working responsibilities, not product agents:
 
-- Product Extractor: read `PRD.md`, extract the six workspaces, acceptance criteria, constraints, and required simulated states before coding.
+- Product Extractor: read `PRD.md`, extract the six workspaces, acceptance criteria, constraints, real API requirements, and workflow states before coding.
 - Implementation Lead: build the Vite React TypeScript app, keep architecture simple, and prioritize runnable increments.
 - UI Builder: implement the cinematic frontend shell, workspace panels, agent cards, logs, scores, artifacts, and visual hierarchy from `Assets/`.
-- Simulation Engineer: implement localStorage persistence, deterministic timers, workflow ticks, mock outputs, agent state transitions, and recommendation scoring.
+- Workflow Engineer: implement localStorage persistence, deterministic workflow ticks, OpenAI/Exa request lifecycle states, OpenAI fallback, agent state transitions, and recommendation scoring.
 - Verifier: run install/build/typecheck/browser verification where available and record results in `PROGRESS.md`.
 - Git Publisher: optional only after the build is verified or when the user explicitly asks for a commit/push.
 
@@ -127,6 +127,7 @@ Current verified Stitch access:
 
 - Remote MCP endpoint is configured in the local Codex config.
 - `ConductorIQ Orchestration Workspace` is accessible as `projects/11643138006250717621`.
+- Generated screen `ConductorIQ Strategic Intelligence Hub` is accessible as `projects/11643138006250717621/screens/dd063358fe864ec2a5c2378c321ae44f`.
 - The project exposes desktop screens and a dark purple-accented design theme.
 - Use this as an optional visual reference only; local `Assets/` remain the reliable implementation source.
 
@@ -140,13 +141,16 @@ When implementing the MVP:
 
 - Build a frontend-only local application using React, TypeScript, Vite, and TailwindCSS.
 - Do not create extra top-level workspaces beyond Intake, Strategy, PRD Generation, Synthesis, Deployment, and Launch.
-- Do not implement a backend server, server APIs, databases, authentication, billing, queues, workers, or production infrastructure.
-- Do not require API keys.
-- Represent LangGraph, OpenAI, Exa, Stitch MCP, and Codex/Cursor as product architecture concepts and simulated integration points inside the UI.
-- Prefer a coherent browser-only simulation over incomplete real infrastructure.
-- Keep the architecture modular enough to replace simulation with real integrations later.
+- Do not implement databases, authentication, billing, queues, workers, or production infrastructure.
+- Use the configured OpenAI and Exa keys for real validation calls.
+- If browser-side calls would expose secrets, use the smallest possible local API proxy for OpenAI and Exa only; keep all persistence in localStorage.
+- Use OpenAI as the fallback provider when Exa fails, times out, or returns insufficient market evidence.
+- Use GPT Image 2 (`gpt-image-2`) for generated visual assets when image generation is needed.
+- Represent LangGraph, Stitch MCP, and Codex/Cursor as product architecture concepts and lightweight UI integration points.
+- Prefer a coherent real API-backed workflow over mock-only output generation.
+- Keep the architecture modular enough to replace the local workflow runner with LangGraph later.
 - Separate orchestration state, agent definitions, artifact data, and UI components.
-- Use timers, deterministic state machines, mock agent outputs, staged artifact generation, and rotating logs so demos are stable.
+- Use deterministic state machines, request lifecycle states, staged artifact generation, and rotating logs so demos are stable.
 - Persist workflow state, generated artifacts, agent states, execution logs, validation scores, and PRD content with localStorage or IndexedDB.
 
 ## 8. Progress Tracking

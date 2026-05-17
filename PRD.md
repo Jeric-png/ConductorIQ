@@ -123,7 +123,21 @@ Out of scope for the 3-hour MVP unless all required items are complete:
 - Detailed responsive tablet/mobile polish.
 - Full architecture diagrams or implementation scaffolds.
 
-### 5.4 Non-Goals
+### 5.4 Three-Hour Delivery Sequence
+
+The implementation should follow this timeboxed sequence. If time runs short, preserve the earlier milestones and simplify later visuals rather than expanding scope.
+
+| Timebox | Milestone | Completion Evidence |
+| --- | --- | --- |
+| 0:00-0:20 | Project scaffold and baseline styling | Vite React TypeScript app starts locally with TailwindCSS loaded |
+| 0:20-0:50 | Cinematic shell | Top bar, six-workspace left nav, main panel, right context panel, and log panel render |
+| 0:50-1:20 | Local orchestration state | Idea intake initializes workflow state, agents, scores, logs, and localStorage persistence |
+| 1:20-2:00 | Strategy validation workspace | Market signals, competitors, personas, risks, validation confidence, and agent activity display |
+| 2:00-2:30 | PRD Generation and Synthesis | PRD summary, feature priorities, critique loop, and pursue/refine/reject recommendation display |
+| 2:30-2:45 | Deployment and Launch | MVP scope, readiness score, launch next actions, and final package summary display |
+| 2:45-3:00 | Verification and polish | Build succeeds, reload persists state, demo flow works end-to-end |
+
+### 5.5 Non-Goals
 
 - Authentication.
 - Billing.
@@ -545,6 +559,8 @@ The MVP should represent the following systems as product architecture concepts 
 - Codex/Cursor-style implementation agents as MVP scaffolding concepts.
 
 Real integrations can be added later, but they must not be required for the current MVP.
+
+Stitch MCP access must not block the 3-hour MVP. If a Stitch MCP connector is available in the environment, Codex may inspect whether a ConductorIQ design/project is accessible and reference it as an external design source. If no Stitch MCP tool is exposed, the UI should continue using local `Assets/` references and simulated Stitch activity in agent logs and design cards.
 
 ### 15.3 MVP Implementation Guidance
 

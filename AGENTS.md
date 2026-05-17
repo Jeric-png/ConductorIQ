@@ -89,6 +89,16 @@ Do not implement unrelated features outside the PRD unless required to make the 
 
 Timeboxing rule: if a requirement cannot fit in the 3-hour MVP window, implement the smallest believable visual simulation that satisfies the user-facing acceptance criteria and document the shortcut in `PROGRESS.md`.
 
+Three-hour execution budget:
+
+- 0:00-0:20: scaffold Vite React TypeScript app and TailwindCSS.
+- 0:20-0:50: build the cinematic shell and six-workspace navigation.
+- 0:50-1:20: implement intake, localStorage state, agents, logs, and deterministic workflow ticks.
+- 1:20-2:00: implement Strategy validation content: market signals, competitors, personas, risks, and scores.
+- 2:00-2:30: implement PRD Generation and Synthesis with critique loop and pursue/refine/reject recommendation.
+- 2:30-2:45: implement Deployment and Launch summaries.
+- 2:45-3:00: verify build, reload persistence, and end-to-end demo flow.
+
 ## 5. Codex Agent Responsibilities
 
 Codex should operate as a compact implementation team during `/goal` work. These are working responsibilities, not product agents:
@@ -102,7 +112,18 @@ Codex should operate as a compact implementation team during `/goal` work. These
 
 Codex should not spawn sub-agents unless the user explicitly requests delegated or parallel agent work. If sub-agents are requested, each sub-agent must receive a bounded task, a disjoint write scope, and this `AGENTS.md` context.
 
-## 6. Product Architecture Discipline
+## 6. Stitch MCP Handling
+
+Stitch MCP is a product integration concept for this MVP, not a required runtime dependency.
+
+When asked to use Stitch MCP:
+
+- First use available tool discovery to check whether a Stitch MCP tool or connector is exposed in the current Codex environment.
+- If Stitch MCP is available, inspect whether a ConductorIQ project or design reference is accessible and record the result in `PROGRESS.md`.
+- If Stitch MCP is not available, do not block implementation. Record that Stitch access was unavailable and continue with local `Assets/` references plus simulated Stitch activity in the UI.
+- Do not add real Stitch API calls, credentials, backend routes, or MCP runtime dependencies during the 3-hour MVP.
+
+## 7. Product Architecture Discipline
 
 LangGraph is part of the ConductorIQ product architecture. It should be represented as the internal orchestration engine that coordinates agents, state, routing, validation loops, retries, dependencies, approval checkpoints, and continuous execution.
 
@@ -120,7 +141,7 @@ When implementing the MVP:
 - Use timers, deterministic state machines, mock agent outputs, staged artifact generation, and rotating logs so demos are stable.
 - Persist workflow state, generated artifacts, agent states, execution logs, validation scores, and PRD content with localStorage or IndexedDB.
 
-## 7. Progress Tracking
+## 8. Progress Tracking
 
 `PROGRESS.md` must remain current during implementation.
 
@@ -135,7 +156,7 @@ Each update should include:
 
 Do not mark a requirement complete unless it is implemented and verified.
 
-## 8. GitHub Commit Discipline
+## 9. GitHub Commit Discipline
 
 Codex should commit progressively to GitHub during implementation instead of waiting until the end of a large build.
 
@@ -152,7 +173,7 @@ Working rules:
 
 If GitHub authentication fails because an environment token is invalid, prefer using the stored `gh` account for `Jeric-png` by running GitHub commands with `GITHUB_TOKEN` unset.
 
-## 9. Verification Discipline
+## 10. Verification Discipline
 
 After meaningful implementation changes, Codex should run the most relevant available checks:
 
@@ -164,7 +185,7 @@ After meaningful implementation changes, Codex should run the most relevant avai
 
 If a check cannot run, record why in `PROGRESS.md` or the final response.
 
-## 10. UX Discipline
+## 11. UX Discipline
 
 ConductorIQ should not look or behave like a generic chatbot.
 
@@ -181,7 +202,7 @@ Implementation should preserve the PRD's intended feel:
 - Memory and validation panels.
 - Readiness and confidence metrics.
 
-## 11. Scope Control
+## 12. Scope Control
 
 Avoid:
 

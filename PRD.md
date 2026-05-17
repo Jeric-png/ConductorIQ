@@ -367,6 +367,14 @@ The UI should be cinematic, technical, and operational. It should not resemble a
 
 Use the local design references in the `Assets/` folder as the product's visual baseline:
 
+- `Assets/Screenshot 2026-05-17 at 9.19.46 AM.png`
+- `Assets/Screenshot 2026-05-17 at 9.20.10 AM.png`
+- `Assets/Screenshot 2026-05-17 at 9.20.28 AM.png`
+- `Assets/Screenshot 2026-05-17 at 9.20.35 AM.png`
+- `Assets/Screenshot 2026-05-17 at 9.20.42 AM.png`
+- `Assets/Screenshot 2026-05-17 at 9.20.49 AM.png`
+- `Assets/Screenshot 2026-05-17 at 9.20.55 AM.png`
+
 - Dark black and charcoal surfaces.
 - Cyan and purple neon accents.
 - Gradient buttons and readiness indicators.
@@ -701,4 +709,12 @@ The MVP is acceptable when:
 ## 20. Source References
 
 - OpenAI Cookbook: [Using Goals in Codex](https://developers.openai.com/cookbook/examples/codex/using_goals_in_codex).
-- Local design references in this workspace: the screenshot assets stored in `Assets/`.
+| Local Design Reference | Path |
+| --- | --- |
+| Intake and orchestration shell | `Assets/Screenshot 2026-05-17 at 9.19.46 AM.png` |
+| Launch readiness layout | `Assets/Screenshot 2026-05-17 at 9.20.10 AM.png` |
+| Engineering orchestration layout | `Assets/Screenshot 2026-05-17 at 9.20.28 AM.png` |
+| Analysis graph layout | `Assets/Screenshot 2026-05-17 at 9.20.35 AM.png` |
+| PRD generation layout | `Assets/Screenshot 2026-05-17 at 9.20.42 AM.png` |
+| Validation confidence layout | `Assets/Screenshot 2026-05-17 at 9.20.49 AM.png` |
+| Idea ingestion layout | `Assets/Screenshot 2026-05-17 at 9.20.55 AM.png` |

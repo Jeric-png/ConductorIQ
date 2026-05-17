@@ -2,8 +2,8 @@
 
 Version: 0.1  
 Date: 2026-05-17  
-Status: MVP specification  
-Primary build target: product-depth local MVP deliverable in approximately 4-5 hours
+Status: Validated product specification  
+Primary build target: completed validated local product workflow
 
 ## 1. Executive Summary
 
@@ -21,7 +21,7 @@ The core product promise is:
 
 > ConductorIQ autonomously coordinates continuously running AI agents to validate startup ideas and produce evidence-backed MVP recommendations.
 
-The MVP should demonstrate the orchestration experience, persistent workflow behavior, visible agent collaboration, artifact generation, validation loops, approval checkpoints, and cinematic execution state as a local application. It should use a real local LangGraph workflow to coordinate the validation agents, real OpenAI and Exa API calls for validation where possible, and OpenAI fallback when Exa is unavailable. It must not include authentication, billing, databases, queues, LangGraph Cloud, or production infrastructure. The implementation should target a 4-5 hour product-depth build window, where completion is measured by workflow depth and validation coverage rather than speed.
+The product should showcase the orchestration experience, persistent workflow behavior, visible agent collaboration, artifact generation, validation loops, approval checkpoints, and cinematic execution state as a local application. It should use a real local LangGraph workflow to coordinate the validation agents, real OpenAI and Exa API calls for validation where possible, and OpenAI fallback when Exa is unavailable. It must not include authentication, billing, databases, queues, LangGraph Cloud, or production infrastructure. Completion is measured by validated feature coverage, workflow correctness, approval-gate behavior, persistence, and end-to-end browser verification rather than implementation speed.
 
 ## 2. Product Vision
 
@@ -70,33 +70,33 @@ ConductorIQ solves this by treating early market validation as a persistent grap
 ### 5.1 Product Goals
 
 - Convert a rough startup idea into a structured market-validation decision and MVP foundation summary.
-- Demonstrate visible coordination between specialized agents.
+- Show visible coordination between specialized agents.
 - Show persistent workflow execution with continuously active states.
 - Maintain project memory and artifact dependencies.
 - Generate interconnected artifacts across market research, strategy, PRD, synthesis, deployment-readiness, and launch recommendation.
 - Trigger critique and validation loops automatically.
 - Communicate the role of LangGraph as the internal orchestration engine.
 - Use the configured OpenAI and Exa keys for real validation calls while keeping persistence local.
-- Deliver a polished local MVP demonstration within a 4-5 hour product-depth implementation window.
+- Deliver a completed, validated local product workflow with approval-gated MVP package generation.
 
-### 5.2 MVP Priorities
+### 5.2 Product Priorities
 
 - Frontend experience and cinematic product feel.
 - Orchestration visualization.
-- Frontend-only workflow execution simulation.
-- Autonomous system illusion.
+- Validated local workflow execution.
+- Observable autonomous behavior.
 - Persistent local state.
 - Modular React architecture.
-- Strong demo quality.
+- Production-grade local product quality.
 - Clear artifact progression.
 - Continuous active execution states.
 - Strict scope control around the six core workspaces.
 
-### 5.3 Product-Depth MVP Constraint
+### 5.3 Completed Feature Standard
 
-The MVP should be completable by one coding agent in approximately 4-5 hours. This constraint prioritizes a complete prompt-to-approved-MVP workflow over a fast but shallow shell. A 10-minute implementation pass is insufficient unless every deep validation gate is already implemented and verified.
+ConductorIQ should optimize for completed, validated features rather than a shallow visual shell. An implementation is insufficient unless every deep validation gate is implemented, verified, and documented in `PROGRESS.md`.
 
-Required within the product-depth MVP window:
+Required for the validated local product:
 
 - A Vite React TypeScript app that runs locally.
 - A cinematic shell with top navigation, left workspace navigation, main content, right context panel, and live log panel.
@@ -106,15 +106,17 @@ Required within the product-depth MVP window:
 - Visible agent roster, status changes, confidence scores, prompt artifacts, market leads, market signals, persona feedback, competitor insights, risk flags, comprehensive PRD artifacts, synthesis plan, prototype approval state, and generated artifacts.
 - A final build recommendation: pursue, refine, or reject, with supporting evidence and approval-gated launch package.
 
-Allowed shortcuts:
+Quality rules:
 
-- Use OpenAI fallback content only when Exa calls fail, time out, or return insufficient data.
-- Use CSS-built panels, cards, graphs, and mock diagrams instead of real charting or graph libraries.
-- Use a minimal real LangGraph `StateGraph` to route the six-workspace validation workflow locally.
-- Represent design assets as references rather than generating new assets.
-- Export the final static MVP package as downloadable local files instead of building cloud deployment or database persistence.
+- Use OpenAI fallback content only when Exa calls fail, time out, or return insufficient data, and label fallback evidence clearly.
+- Fallbacks must behave as explicit product states, not hidden bypasses.
+- Approval gates must be functional and must control downstream workflow progression.
+- PRD generation must produce a comprehensive artifact with review findings, not a compact summary.
+- Market validation must include leads, questions, evidence labels, and confidence scoring, not generic market copy.
+- GPT Image 2 unavailable states must produce labelled visual prompt cards and keep prototype approval pending.
+- Static export must include the full validated package, not only launch copy.
 
-Out of scope for the product-depth MVP unless all required items are complete:
+Out of scope for the validated local product unless all required items are complete:
 
 - Database-backed persistence.
 - LangGraph Cloud, hosted durable workflows, or database-backed LangGraph checkpointing.
@@ -124,21 +126,21 @@ Out of scope for the product-depth MVP unless all required items are complete:
 - Detailed responsive tablet/mobile polish.
 - Full architecture diagrams or implementation scaffolds.
 
-### 5.4 Product-Depth Delivery Sequence
+### 5.4 Feature Delivery Sequence
 
-The implementation should follow this timeboxed sequence. If time runs short, preserve the earlier milestones and simplify later visuals rather than expanding scope.
+The implementation should follow this sequence. Do not advance to later phases by skipping validation gates.
 
-| Timebox | Milestone | Completion Evidence |
+| Phase | Milestone | Completion Evidence |
 | --- | --- | --- |
-| 0:00-0:20 | Project audit and scaffold | Dependency check, PRD gap list, runnable Vite React TypeScript app |
-| 0:20-0:45 | Cinematic shell | Top bar, six-workspace left nav, main panel, right context panel, and log panel render |
-| 0:45-1:15 | Prompt lifecycle | Crafted prompt, prompt critique, improved prompt, prompt quality score, and LangGraph prompt-validation state |
-| 1:15-1:50 | Strategy validation workspace | OpenAI + Exa or fallback market leads, market signals, competitors, personas, risks, validation questions, source labels, and confidence score |
-| 1:50-2:30 | PRD Generation | Comprehensive PRD artifact, section completeness, PRD review findings, quality score, and revision requirements |
-| 2:30-3:05 | Synthesis | Review-first Synthesis Plan, interface improvements, validation gaps, rerun/revise/continue controls, and hold state |
-| 3:05-3:40 | Deployment and prototype review | GPT Image 2 prototype output or labelled visual prompt fallback, approval/rejection controls, and regeneration state |
-| 3:40-4:20 | Launch package | Build-preparation agents, implementation plan, component map, local static MVP package, launch next actions, and final package summary |
-| 4:20-4:45 | Verification and polish | Build succeeds, reload persists state, approval/rejection paths work, full browser validation matrix passes |
+| 1 | Project audit and scaffold | Dependency check, PRD gap list, runnable Vite React TypeScript app |
+| 2 | Cinematic shell | Top bar, six-workspace left nav, main panel, right context panel, and log panel render |
+| 3 | Prompt lifecycle | Crafted prompt, prompt critique, improved prompt, prompt quality score, and LangGraph prompt-validation state |
+| 4 | Strategy validation workspace | OpenAI + Exa or fallback market leads, market signals, competitors, personas, risks, validation questions, source labels, and confidence score |
+| 5 | PRD Generation | Comprehensive PRD artifact, section completeness, PRD review findings, quality score, and revision requirements |
+| 6 | Synthesis | Review-first Synthesis Plan, interface improvements, validation gaps, rerun/revise/continue controls, and hold state |
+| 7 | Deployment and prototype review | GPT Image 2 prototype output or labelled visual prompt fallback, approval/rejection controls, and regeneration state |
+| 8 | Launch package | Build-preparation agents, implementation plan, component map, local static MVP package, launch next actions, and final package summary |
+| 9 | Verification and polish | Build succeeds, reload persists state, approval/rejection paths work, full browser validation matrix passes |
 
 ### 5.5 Non-Goals
 
@@ -162,7 +164,7 @@ The implementation should follow this timeboxed sequence. If time runs short, pr
 ### 6.1 Primary Users
 
 - Solo founders who need to turn vague ideas into validated MVP plans.
-- Hackathon builders who need to move from idea to demo quickly.
+- Builders who need to move from idea to a validated MVP foundation without skipping product validation.
 - Startup studio operators evaluating multiple early-stage concepts.
 - Technical founders who want product, market, UX, and architecture scaffolding before implementation.
 
@@ -196,7 +198,7 @@ The implementation should follow this timeboxed sequence. If time runs short, pr
 
 ## 8. Required Workspaces and Workflow Stages
 
-ConductorIQ must center the MVP around six core workspaces. Detailed agent activities may be shown inside these workspaces, but the navigation and implementation must not expand beyond these six areas for the product-depth MVP.
+ConductorIQ must center the product around six core workspaces. Detailed agent activities may be shown inside these workspaces, but the navigation and implementation must not expand beyond these six areas.
 
 | Workspace | Purpose | Required MVP Outputs |
 | --- | --- | --- |
@@ -211,7 +213,7 @@ Detailed activities such as idea refinement, market validation, competitor analy
 
 ## 9. Agent System Requirements
 
-The platform must include visible specialized agents. Each agent should have a name, role, execution state, current task, progress indicator, outputs, logs, dependencies, and collaboration events. For the product-depth MVP, agents may be static definitions driven by a shared frontend state machine.
+The platform must include visible specialized agents. Each agent should have a name, role, execution state, current task, progress indicator, outputs, logs, dependencies, and collaboration events. Agents may use deterministic local state where real integrations are unavailable, but the workflow state must remain coherent and verifiable.
 
 ### 9.1 Required Agents
 
@@ -236,9 +238,9 @@ The platform must include visible specialized agents. Each agent should have a n
 | MVP Planning Agent | Produces build plan, backlog, and implementation sequencing. | MVP backlog, milestone plan, scaffold notes |
 | QA Critic Agent | Reviews outputs for ambiguity, feasibility, risk, and missing requirements. | Critique events, revision requests, risk flags |
 | Build Orchestrator Agent | Activates only after prototype approval and coordinates implementation preparation agents. | Build readiness plan, component map, execution sequence |
-| Launch Agent | Packages launch assets, implementation plan, approved prototype direction, and readiness summaries. | Demo script, launch checklist, readiness score, MVP package |
+| Launch Agent | Packages launch assets, implementation plan, approved prototype direction, and readiness summaries. | Product walkthrough script, launch checklist, readiness score, MVP package |
 
-To stay within the MVP window, the UI may show all agents as compact cards while actively executing the highest-impact agents: Workflow Supervisor, Prompt Architect, Prompt Validator, Market Research, Competitor Analysis, Persona Validation, PRD, PRD Reviewer, QA Critic, GPT Image, Prototype Review, Memory, and Launch.
+The UI may show all agents as compact cards while actively executing the highest-impact agents: Workflow Supervisor, Prompt Architect, Prompt Validator, Market Research, Competitor Analysis, Persona Validation, PRD, PRD Reviewer, QA Critic, GPT Image, Prototype Review, Memory, and Launch.
 
 ### 9.2 Agent States
 
@@ -344,7 +346,7 @@ Continuous execution should include:
 
 ### 10.5 MVP LangGraph Scope
 
-To keep the product-depth build feasible, the MVP LangGraph implementation should be intentionally small:
+To keep the local product maintainable, the LangGraph implementation should be focused and explicit:
 
 - Use `@langchain/langgraph` with a single local `StateGraph`.
 - Model the six top-level nodes as `intake`, `strategy`, `prdGeneration`, `synthesis`, `deployment`, and `launch`.
@@ -421,7 +423,7 @@ Each artifact should include:
 - Content payload.
 - Review status when applicable.
 - Approval status when applicable.
-- Evidence source label: Exa, OpenAI, GPT Image 2, fallback, user input, or local simulation.
+- Evidence source label: Exa, OpenAI, GPT Image 2, fallback, user input, or deterministic local validation.
 
 ### 11.3 Artifact States
 
@@ -587,7 +589,7 @@ The interface improvement layer should provide:
 - The generated PRD should include executive summary, vision, problem statement, goals, non-goals, users, workflow, feature requirements, UX requirements, technical direction, data models, acceptance criteria, risks, roadmap, and source assumptions.
 - The PRD should explain how market evidence, persona objections, and competitor analysis affect product scope.
 - The PRD should include implementation constraints and explicitly identify what should not be built.
-- The PRD should include measurable acceptance criteria and demo-readiness requirements.
+- The PRD should include measurable acceptance criteria and product-readiness requirements.
 - The PRD Reviewer Agent must produce review findings, missing sections, ambiguity flags, and a PRD quality score.
 - If the PRD quality score is below the configured threshold, ConductorIQ should revise the PRD before Synthesis.
 
@@ -625,12 +627,12 @@ The interface improvement layer should provide:
 
 - Active project state persists in localStorage or IndexedDB.
 - Reloading the app restores idea, workflow state, artifacts, logs, validation scores, PRD content, and agent progress.
-- A reset or new workflow action clears the current demo state.
+- A reset or new workflow action clears the current local workflow state.
 - Downloaded static MVP package files are separate local exports and are not treated as the source of truth after download.
 
-### 13.10 Continuous Activity Simulation
+### 13.10 Continuous Activity Execution
 
-- The MVP should continue updating visible states while validation is active.
+- The product should continue updating visible states while validation is active.
 - Logs, nodes, agent statuses, and artifact cards should update based on real request lifecycle states and deterministic local workflow ticks.
 - Deterministic ticks are allowed for progress visualization only; validation outputs should come from OpenAI, Exa, or OpenAI fallback.
 - The workflow must run locally without a database.
@@ -659,7 +661,7 @@ The interface improvement layer should provide:
 
 - Fast local startup.
 - Responsive UI on desktop and acceptable behavior on tablet-sized screens.
-- High visual polish suitable for a live demo.
+- High visual polish suitable for a product walkthrough.
 - Low setup friction.
 - OpenAI and Exa keys may be required for real validation; OpenAI fallback must handle Exa failure.
 - No database required.
@@ -695,7 +697,7 @@ The MVP should use real OpenAI and Exa calls while keeping all storage local and
 
 Implementation should read keys from local environment variables and never commit secrets.
 
-Stitch MCP access must not block the product-depth MVP. If a Stitch MCP connector is available in the environment, Codex may inspect whether a ConductorIQ design/project is accessible and reference it as an external design source. If no Stitch MCP tool is exposed, the UI should continue using local `Assets/` references and simulated Stitch activity in agent logs and design cards.
+Stitch MCP access must not block the validated local product. If a Stitch MCP connector is available in the environment, Codex may inspect whether a ConductorIQ design/project is accessible and reference it as an external design source. If no Stitch MCP tool is exposed, the UI should continue using local `Assets/` references and clearly labelled Stitch reference activity in agent logs and design cards.
 
 Verified Stitch reference as of 2026-05-17:
 
@@ -710,7 +712,7 @@ Verified Stitch reference as of 2026-05-17:
 
 ### 15.3 MVP Implementation Guidance
 
-For the hackathon MVP, implementation must use:
+For the validated local product, implementation must use:
 
 - In-memory orchestration plus localStorage persistence.
 - A minimal local LangGraph `StateGraph` for workspace routing and agent handoffs.
@@ -723,7 +725,7 @@ For the hackathon MVP, implementation must use:
 - GPT Image 2 for generated visual artifacts when required.
 - UI-first architecture that can later be connected to real integrations.
 
-The MVP must run without a database. If secrets cannot be safely called from the browser, use a minimal local API proxy for OpenAI and Exa while keeping all persistence in localStorage. The local LangGraph graph must remain lightweight enough to run during the demo without hosted workflow infrastructure.
+The MVP must run without a database. If secrets cannot be safely called from the browser, use a minimal local API proxy for OpenAI and Exa while keeping all persistence in localStorage. The local LangGraph graph must remain lightweight enough to run without hosted workflow infrastructure.
 
 Dependency verification is part of the implementation contract. Before building features, confirm that `@langchain/langgraph`, `@langchain/core`, `openai`, `exa-js`, React, Vite, TypeScript, and TailwindCSS are installed and available from the current lockfile.
 
@@ -841,7 +843,7 @@ interface Artifact {
   confidence: number;
   summary: string;
   content: string;
-  evidenceSource?: "user-input" | "openai" | "exa" | "gpt-image-2" | "fallback" | "local-simulation";
+  evidenceSource?: "user-input" | "openai" | "exa" | "gpt-image-2" | "fallback" | "deterministic-local";
   reviewStatus?: "not-reviewed" | "under-review" | "reviewed" | "revision-required";
   approvalStatus?: "not-required" | "pending" | "approved" | "rejected";
   updatedAt: string;
@@ -868,7 +870,7 @@ interface MemoryEntry {
 
 ## 17. MVP Acceptance Criteria
 
-The MVP is acceptable within the product-depth build window when:
+The product is acceptable when:
 
 - A user can enter a rough idea and initialize a ConductorIQ project.
 - The system crafts, validates, and improves a structured prompt before downstream generation.
@@ -939,9 +941,9 @@ The product should be considered incomplete if:
 | --- | --- | --- |
 | Product feels like a chatbot | Weak differentiation | Keep input limited to intake and focus UI on graph, agents, logs, artifacts, and memory |
 | LangGraph role is misunderstood | Architecture confusion | State clearly that LangGraph is product runtime architecture, not Codex's build workflow |
-| MVP overengineers backend | Missed demo deadline | Use localStorage for persistence and only a minimal local API proxy if needed to protect OpenAI/Exa secrets |
-| Autonomy feels fake | Weak demo credibility | Make state transitions coherent, dependency-driven, and tied to artifacts |
-| Real integration scope expands too far | Broken demo or scope creep | Use only a minimal local LangGraph `StateGraph`, OpenAI + Exa for validation, GPT Image 2 for visuals, and keep Stitch/Codex as lightweight UI concepts |
+| MVP overengineers backend | Slower product validation and unnecessary complexity | Use localStorage for persistence and only a minimal local API proxy if needed to protect OpenAI/Exa secrets |
+| Autonomy feels fake | Weak product credibility | Make state transitions coherent, dependency-driven, and tied to artifacts |
+| Real integration scope expands too far | Broken workflow or scope creep | Use only a focused local LangGraph `StateGraph`, OpenAI + Exa for validation, GPT Image 2 for visuals, and keep Stitch/Codex as lightweight UI concepts |
 | Visuals feel generic | Reduced impact | Follow screenshot-inspired cinematic dark UI with neon operational details |
 | Workflow stalls | Bad live experience | Ensure timer-driven progression and retry fallback paths |
 
@@ -961,7 +963,7 @@ The product should be considered incomplete if:
 - Rich artifact version history.
 - Scheduled revalidation of startup ideas over time.
 
-Future roadmap items must not be implemented in the product-depth MVP unless the required acceptance criteria are already complete and verified.
+Future roadmap items must not be implemented unless the required acceptance criteria are already complete and verified.
 
 ## 20. Source References
 

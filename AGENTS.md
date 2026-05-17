@@ -50,9 +50,9 @@ Reference: https://developers.openai.com/cookbook/examples/codex/using_goals_in_
 
 For this repository, the persistent implementation goal is:
 
-> Build ConductorIQ into a polished frontend-only local product workflow that matches `PRD.md` as closely as possible and demonstrates the full prompt-to-approved-MVP orchestration loop.
+> Build ConductorIQ into a polished frontend-only local product workflow that matches `PRD.md` as closely as possible and executes the full prompt-to-approved-MVP orchestration loop with completed, validated features.
 
-The implementation target is no longer a quick shell or 10-minute demo pass. Fast completion is acceptable only when the deep completion gates below are genuinely implemented and verified. Codex must not mark a goal complete merely because the app builds, because the UI looks polished, or because one happy path reaches Launch.
+The implementation target is completed, validated product behavior. Codex must not optimize for a shallow shell, visual-only prototype, or minimal pass. Completion is acceptable only when the deep completion gates below are genuinely implemented and verified. Codex must not mark a goal complete merely because the app builds, because the UI looks polished, or because one happy path reaches Launch.
 
 Completion evidence should include:
 
@@ -104,25 +104,25 @@ Prioritize in this order:
 9. Synthesis workspace with review-first behavior, comprehensive Synthesis Plan, interface improvement notes, and a hold state before continuation.
 10. Deployment workspace with GPT Image 2 prototype generation or visual prompt fallback, prototype review, and approval/rejection controls.
 11. Launch workspace with build-preparation agents, implementation plan, component map, static package export, readiness dashboard, and next actions.
-12. Polish, responsiveness, and demo reliability.
+12. Polish, responsiveness, and product reliability.
 
-Do not implement unrelated features outside the PRD unless required to make the MVP coherent, runnable, or demo-ready.
+Do not implement unrelated features outside the PRD unless required to make the product coherent, runnable, or validated.
 
-Depth rule: if a requirement cannot be fully implemented in one pass, implement the strongest working slice that preserves the full workflow contract and document the shortcut in `PROGRESS.md`. Do not remove approval gates, PRD review, market lead validation, or synthesis hold behavior just to finish quickly.
+Depth rule: if a requirement cannot be fully implemented in one pass, implement the strongest working slice that preserves the full workflow contract and document the limitation in `PROGRESS.md`. Do not remove approval gates, PRD review, market lead validation, or synthesis hold behavior for premature completion.
 
-Deep implementation budget:
+Execution phases:
 
-- 0:00-0:20: audit PRD, AGENTS, current implementation, dependency baseline, and gap list in `PROGRESS.md`.
-- 0:20-0:45: implement or refine shell, routing, persistence, agent roster, logs, and state model.
-- 0:45-1:15: implement prompt craft, prompt validation, improved prompt diff, and prompt quality scoring.
-- 1:15-1:50: implement Strategy market leads, market validation questions, competitor evidence, personas, risks, and fallback/real source labels.
-- 1:50-2:30: implement comprehensive PRD generation, PRD section completeness, PRD review findings, quality score, and revision loop.
-- 2:30-3:05: implement Synthesis review-first plan, interface improvement critique, validation gaps, rerun/revise/continue controls, and hold state.
-- 3:05-3:40: implement GPT Image 2 prototype generation or visual prompt fallback, prototype review, approval/rejection states, and regeneration loop.
-- 3:40-4:20: implement Launch build-preparation agents, implementation plan, component map, final MVP package, static export, and approval-backed next actions.
-- 4:20-4:45: run full validation matrix, browser scenarios, persistence reload, build, lint, and update `PROGRESS.md`.
+- Phase 1: audit PRD, AGENTS, current implementation, dependency baseline, and gap list in `PROGRESS.md`.
+- Phase 2: implement or refine shell, routing, persistence, agent roster, logs, and state model.
+- Phase 3: implement prompt craft, prompt validation, improved prompt diff, and prompt quality scoring.
+- Phase 4: implement Strategy market leads, market validation questions, competitor evidence, personas, risks, and fallback/real source labels.
+- Phase 5: implement comprehensive PRD generation, PRD section completeness, PRD review findings, quality score, and revision loop.
+- Phase 6: implement Synthesis review-first plan, interface improvement critique, validation gaps, rerun/revise/continue controls, and hold state.
+- Phase 7: implement GPT Image 2 prototype generation or visual prompt fallback, prototype review, approval/rejection states, and regeneration loop.
+- Phase 8: implement Launch build-preparation agents, implementation plan, component map, final MVP package, static export, and approval-backed next actions.
+- Phase 9: run full validation matrix, browser scenarios, persistence reload, build, lint, and update `PROGRESS.md`.
 
-Do not artificially wait to consume time. The point of the longer budget is deeper product behavior and stronger verification, not idle time. If the work appears complete in under two hours, Codex must run the full validation matrix and perform a gap review against `PRD.md` before claiming completion.
+Do not artificially wait to consume time. The point is completed product behavior and stronger verification, not idle time. Before claiming completion, Codex must run the full validation matrix and perform a gap review against `PRD.md`.
 
 ## 5. Codex Agent Responsibilities
 
@@ -150,8 +150,8 @@ When asked to use Stitch MCP:
 
 - First use available tool discovery to check whether a Stitch MCP tool or connector is exposed in the current Codex environment.
 - If Stitch MCP is available, inspect whether a ConductorIQ project or design reference is accessible and record the result in `PROGRESS.md`.
-- If Stitch MCP is not available, do not block implementation. Record that Stitch access was unavailable and continue with local `Assets/` references plus simulated Stitch activity in the UI.
-- Do not add real Stitch API calls, credentials, backend routes, or MCP runtime dependencies during the product-depth MVP.
+- If Stitch MCP is not available, do not block implementation. Record that Stitch access was unavailable and continue with local `Assets/` references plus clearly labelled Stitch reference activity in the UI.
+- Do not add real Stitch API calls, credentials, backend routes, or MCP runtime dependencies unless the PRD explicitly requires them and verification can remain stable.
 
 Current verified Stitch access:
 
@@ -183,7 +183,7 @@ When implementing the MVP:
 - Do not implement databases, authentication, billing, queues, workers, or production infrastructure.
 - Do not use LangGraph Cloud, hosted checkpointers, database-backed checkpointing, queues, or worker infrastructure.
 - Use the configured OpenAI and Exa keys for real validation calls.
-- If browser-side calls would expose secrets, use the smallest possible local API proxy for OpenAI and Exa only; keep all persistence in localStorage.
+- If browser-side calls would expose secrets, use a minimal local API proxy for OpenAI and Exa only; keep all persistence in localStorage.
 - Use OpenAI as the fallback provider when Exa fails, times out, or returns insufficient market evidence.
 - Use GPT Image 2 (`gpt-image-2`) for generated visual assets when image generation is needed.
 - Support importing a local `.txt` or `.md` idea brief through the browser File API.
@@ -196,7 +196,7 @@ When implementing the MVP:
 - Prefer a coherent real API-backed workflow over mock-only output generation.
 - If time is tight, implement one reliable full lifecycle path plus at least one rejection/revision branch before adding sophisticated branching.
 - Separate orchestration state, agent definitions, artifact data, and UI components.
-- Use deterministic state machines, request lifecycle states, staged artifact generation, and rotating logs so demos are stable.
+- Use deterministic state machines, request lifecycle states, staged artifact generation, and rotating logs so product workflows are stable.
 - Persist workflow state, generated artifacts, agent states, execution logs, validation scores, and PRD content with localStorage or IndexedDB.
 
 ## 8. Progress Tracking
@@ -208,13 +208,13 @@ Each update should include:
 - Completed PRD requirements.
 - In-progress requirements.
 - Remaining requirements.
-- Known gaps or shortcuts.
+- Known gaps or limitations.
 - Verification performed.
 - Next highest-priority task.
 - Current deep completion gate status.
 - Last browser scenario tested.
 - Last approval/rejection path tested.
-- Any requirement intentionally simulated or downgraded, with reason.
+- Any requirement intentionally represented as fallback or deterministic local validation, with reason.
 
 Do not mark a requirement complete unless it is implemented and verified.
 
@@ -234,11 +234,11 @@ Do not mark a requirement complete unless it is implemented and verified.
 
 ## 9. GitHub Commit Discipline
 
-GitHub commits and pushes are optional during the product-depth MVP build. Building and verifying the app takes priority over publishing milestones.
+GitHub commits and pushes are optional during product implementation. Building and verifying the app takes priority over publishing milestones.
 
 Working rules:
 
-- Commit only after a coherent milestone if verification has passed and doing so will not endanger the product-depth delivery window.
+- Commit only after a coherent milestone if verification has passed.
 - Keep commits small enough that each one has a clear purpose and can be reviewed independently.
 - Run the most relevant available verification before committing.
 - Do not commit broken or partially applied work unless the commit message explicitly marks it as a checkpoint and the user asked for that behavior.
@@ -342,12 +342,12 @@ Avoid:
 - Microservices.
 - Unrelated dashboards.
 - Features not grounded in the PRD.
-- Work that does not help complete the product-depth MVP acceptance criteria.
+- Work that does not help complete the PRD acceptance criteria.
 
 Prefer:
 
-- Demo reliability.
-- Clear orchestration illusion.
+- Product reliability.
+- Clear orchestration behavior.
 - Strong product storytelling.
 - Local-first persistence.
 - Modular React and TypeScript code.
